@@ -84,7 +84,10 @@ const DocumentsList = () => {
   };
 
   const getStatusBadge = (status: DocumentStatus) => {
-    const variants: Record<DocumentStatus, "default" | "secondary" | "destructive"> = {
+    const variants: Record<
+      DocumentStatus,
+      "default" | "secondary" | "destructive"
+    > = {
       indexed: "default",
       processing: "secondary",
       failed: "destructive",
@@ -116,7 +119,16 @@ const DocumentsList = () => {
         <ToggleGroup
           type="single"
           value={viewMode}
-          onValueChange={(value) => value && setViewMode(value)}
+          onValueChange={(value) => {
+            if (!value) return;
+            if (document.startViewTransition) {
+              document.startViewTransition(() => {
+                setViewMode(value);
+              });
+            } else {
+              setViewMode(value);
+            }
+          }}
         >
           <ToggleGroupItem value="table" aria-label="Table view">
             <LayoutList className="h-4 w-4" />
@@ -127,29 +139,31 @@ const DocumentsList = () => {
         </ToggleGroup>
       </div>
 
-      {viewMode === "table" ? (
-        <div className="border rounded-lg">
-          <DocumentTable
-            documents={documents}
-            handleAction={handleAction}
-            getStatusIcon={getStatusIcon}
-            getStatusBadge={getStatusBadge}
-            getRowClassName={getRowClassName}
-          />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {documents.map((doc) => (
-            <DocumentCard
-              key={doc.id}
-              doc={doc}
+      <div style={{ viewTransitionName: "documents-view" }} className="w-full">
+        {viewMode === "table" ? (
+          <div className="border rounded-lg">
+            <DocumentTable
+              documents={documents}
               handleAction={handleAction}
               getStatusIcon={getStatusIcon}
               getStatusBadge={getStatusBadge}
+              getRowClassName={getRowClassName}
             />
-          ))}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {documents.map((doc) => (
+              <DocumentCard
+                key={doc.id}
+                doc={doc}
+                handleAction={handleAction}
+                getStatusIcon={getStatusIcon}
+                getStatusBadge={getStatusBadge}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
