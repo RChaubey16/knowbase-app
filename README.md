@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 KnowBase App
 
-## Getting Started
+A modern, full-featured knowledge base application built with Next.js 16, designed to help you organize, search, and manage your documents efficiently.
 
-First, run the development server:
+> [!WARNING]
+> **This project is currently under active development.** Features and APIs may change without notice.
 
+## ✨ Features
+
+- 🔍 **Semantic Search** - Powerful search functionality with relevance scoring
+- 📄 **Document Management** - Organize and manage documents with multiple view options (table/grid)
+- 🎨 **Modern UI** - Clean, responsive interface built with shadcn/ui components
+- 🌓 **Dark Mode** - Full dark/light theme support with system preference detection
+- 📱 **Responsive Design** - Optimized for desktop, tablet, and mobile devices
+- 🎯 **Type-Safe** - Built with TypeScript for enhanced developer experience
+- ⚡ **Fast Performance** - Leveraging Next.js 16 App Router and React 19
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20+ 
+- pnpm 10.7.0+ (recommended package manager)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd knowbase-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+### Core
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **React**: 19.2.3
+- **TypeScript**: 5.x
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### UI Components
+- **Component Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Radix UI Primitives**: Accessible, unstyled components
+- **Theme Management**: next-themes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Development Tools
+- **Linting**: ESLint 9
+- **Package Manager**: pnpm
 
-## Deploy on Vercel
+## 📁 Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+knowbase-app/
+├── app/                    # Next.js App Router pages
+│   ├── documents/         # Document management page
+│   ├── search/            # Search interface
+│   ├── login/             # Authentication (in development)
+│   ├── layout.tsx         # Root layout with theme provider
+│   └── globals.css        # Global styles and theme variables
+├── components/            # React components
+│   ├── documents/         # Document-related components
+│   ├── search/            # Search components
+│   ├── layout/            # Layout components (TopBar, etc.)
+│   ├── forms/             # Form components
+│   ├── cards/             # Card components
+│   ├── table/             # Table components
+│   ├── ui/                # shadcn/ui components
+│   └── theme-toggle.tsx   # Theme switcher component
+├── lib/                   # Utility functions
+├── types/                 # TypeScript type definitions
+└── public/                # Static assets
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🎨 Design System
+
+The application uses a custom design system with:
+- **Typography**: Montserrat font family
+- **Color Palette**: Carefully crafted light and dark themes
+- **Components**: Consistent, reusable UI components from shadcn/ui
+- **Animations**: Smooth transitions and micro-interactions
+
+## 📝 Available Scripts
+
+```bash
+pnpm dev        # Start development server
+pnpm build      # Build for production
+pnpm start      # Start production server
+pnpm lint       # Run ESLint
+```
+
+## 🔮 Planned Features
+
+- [ ] User authentication and authorization
+- [ ] Document upload and processing
+- [ ] Vector-based semantic search integration
+- [ ] Document chunking and embedding
+- [ ] Workspace management
+- [ ] Advanced filtering and sorting
+- [ ] Document tagging and categorization
+- [ ] Export functionality
+- [ ] API integration with backend services
+
+## 🤝 Contributing
+
+This project is currently in active development. Contribution guidelines will be added soon.
+
+## 📄 License
+
+This project is private and proprietary.
+
+## 🔗 Related Projects
+
+- [knowbase-api](https://github.com/RChaubey16/knowbase-api) - Backend API service (if applicable)
+
+---
+
+**Note**: This is a work-in-progress project. Features, documentation, and structure are subject to change as development continues.
