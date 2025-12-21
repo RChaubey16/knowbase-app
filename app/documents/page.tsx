@@ -1,9 +1,13 @@
 import DocumentsList from "@/components/documents/documents-list";
+import { TopBar } from "@/components/layout/top-bar";
 
 export default function DocumentsPage() {
   return (
-   <>
-   <DocumentsList/>
-   </>
-  )
+    <div className="flex min-h-screen flex-col">
+      <TopBar title="Documents" indexStatus="ready" />
+      <main className="flex-1">
+        <DocumentsList />
+      </main>
+    </div>
+  );
 }

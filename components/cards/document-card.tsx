@@ -1,16 +1,23 @@
-import { MoreVertical, FileText, Link2, Clock } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { FileText, Link2, Clock } from "lucide-react";
 
-const DocumentCard = ({ doc, handleAction, getStatusIcon, getStatusBadge }) => {  
-    return (
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Document, DocumentStatus, ActionType } from "@/types/document";
+import DocumentActionsDropdown from "../documents/document-actions-dropdown";
+
+interface DocumentCardProps {
+  doc: Document;
+  handleAction: (action: ActionType, doc: Document) => void;
+  getStatusIcon: (status: DocumentStatus) => React.ReactNode;
+  getStatusBadge: (status: DocumentStatus) => React.ReactNode;
+}
+
+const DocumentCard = ({
+  doc,
+  handleAction,
+  getStatusIcon,
+  getStatusBadge,
+}: DocumentCardProps) => {
+  return (
     <Card
       key={doc.id}
       className={`cursor-pointer transition-all hover:shadow-md ${
@@ -28,58 +35,8 @@ const DocumentCard = ({ doc, handleAction, getStatusIcon, getStatusBadge }) => {
             {getStatusIcon(doc.status)}
             <h3 className="font-semibold text-base truncate">{doc.title}</h3>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 shrink-0"
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAction("view", doc);
-                }}
-              >
-                View
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAction("edit", doc);
-                }}
-              >
-                Edit
-              </DropdownMenuItem>
-              {doc.status === "failed" && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAction("reindex", doc);
-                    }}
-                  >
-                    Re-index
-                  </DropdownMenuItem>
-                </>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAction("delete", doc);
-                }}
-              >
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+          <DocumentActionsDropdown doc={doc} handleAction={handleAction} />
         </div>
       </CardHeader>
       <CardContent className="space-y-3">

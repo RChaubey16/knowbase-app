@@ -12,10 +12,11 @@ import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
+import { Document, DocumentStatus, ActionType } from "@/types/document";
 
 const DocumentsList = () => {
-  const [viewMode, setViewMode] = useState("table");
-  const [documents, setDocuments] = useState([
+  const [viewMode, setViewMode] = useState<string>("table");
+  const [documents, setDocuments] = useState<Document[]>([
     {
       id: 1,
       title: "Product Requirements Document",
@@ -63,7 +64,7 @@ const DocumentsList = () => {
     },
   ]);
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
       case "indexed":
         return (
@@ -82,8 +83,8 @@ const DocumentsList = () => {
     }
   };
 
-  const getStatusBadge = (status) => {
-    const variants = {
+  const getStatusBadge = (status: DocumentStatus) => {
+    const variants: Record<DocumentStatus, "default" | "secondary" | "destructive"> = {
       indexed: "default",
       processing: "secondary",
       failed: "destructive",
@@ -95,12 +96,12 @@ const DocumentsList = () => {
     );
   };
 
-  const handleAction = (action, doc) => {
+  const handleAction = (action: ActionType, doc: Document) => {
     console.log(`${action} document:`, doc);
     // Handle actions here
   };
 
-  const getRowClassName = (status) => {
+  const getRowClassName = (status: DocumentStatus) => {
     const base = "cursor-pointer transition-colors";
     if (status === "failed")
       return `${base} bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/30`;
@@ -111,13 +112,7 @@ const DocumentsList = () => {
 
   return (
     <div className="w-full p-6 bg-background">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Documents</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage and organize your indexed documents
-          </p>
-        </div>
+      <div className="mb-6 flex items-center justify-end">
         <ToggleGroup
           type="single"
           value={viewMode}
