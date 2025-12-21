@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from 'react';
-import { MoreVertical, FileText, Link2, Clock, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
+import React, { useState } from 'react';
+import { MoreVertical, FileText, Link2, Clock, AlertCircle, CheckCircle, RefreshCw, LayoutGrid, LayoutList } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -19,8 +19,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 const DocumentsList = () => {
+  const [viewMode, setViewMode] = useState('table');
   const [documents, setDocuments] = useState([
     {
       id: 1,
@@ -104,13 +107,24 @@ const DocumentsList = () => {
 
   return (
     <div className="w-full p-6 bg-background">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Documents</h1>
-        <p className="text-sm text-muted-foreground mt-1">Manage and organize your indexed documents</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Documents</h1>
+          <p className="text-sm text-muted-foreground mt-1">Manage and organize your indexed documents</p>
+        </div>
+        <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value)}>
+          <ToggleGroupItem value="table" aria-label="Table view">
+            <LayoutList className="h-4 w-4" />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="cards" aria-label="Cards view">
+            <LayoutGrid className="h-4 w-4" />
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
-      <div className="border rounded-lg">
-        <Table>
+      {viewMode === 'table' ? (
+        <div className="border rounded-lg">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="w-[30%]">Title / Source</TableHead>
@@ -195,6 +209,84 @@ const DocumentsList = () => {
           </TableBody>
         </Table>
       </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {documents.map((doc) => (
+            <Card 
+              key={doc.id} 
+              className={`cursor-pointer transition-all hover:shadow-md ${
+                doc.status === 'failed' 
+                  ? 'border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/20' 
+                  : doc.status === 'processing'
+                  ? 'border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/20'
+                  : ''
+              }`}
+              onClick={() => handleAction('view', doc)}
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {getStatusIcon(doc.status)}
+                    <h3 className="font-semibold text-base truncate">{doc.title}</h3>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleAction('view', doc); }}>
+                        View
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleAction('edit', doc); }}>
+                        Edit
+                      </DropdownMenuItem>
+                      {doc.status === 'failed' && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleAction('reindex', doc); }}>
+                            Re-index
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        className="text-destructive focus:text-destructive"
+                        onClick={(e) => { e.stopPropagation(); handleAction('delete', doc); }}
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground line-clamp-3">
+                  {doc.snippet}
+                </p>
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
+                      {doc.sourceType === 'URL' ? (
+                        <Link2 className="w-3.5 h-3.5" />
+                      ) : (
+                        <FileText className="w-3.5 h-3.5" />
+                      )}
+                      <span>{doc.sourceType}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{doc.updated}</span>
+                    </div>
+                  </div>
+                  {getStatusBadge(doc.status)}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
