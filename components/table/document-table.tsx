@@ -27,7 +27,8 @@ const DocumentTable = ({
   getRowClassName,
 }: DocumentTableProps) => {
   return (
-    <Table>
+    <>
+      <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[30%]">Title / Source</TableHead>
@@ -80,6 +81,7 @@ const DocumentTable = ({
         ))}
       </TableBody>
     </Table>
+</>
   );
 };
 

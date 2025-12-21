@@ -10,13 +10,24 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 
 const DocumentsList = () => {
   const [viewMode, setViewMode] = useState<string>("table");
-  const [documents, setDocuments] = useState<Document[]>([
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const [documents] = useState<Document[]>([
     {
       id: 1,
       title: "Product Requirements Document",
@@ -63,6 +74,12 @@ const DocumentsList = () => {
       updated: "1w ago",
     },
   ]);
+
+  const totalPages = Math.ceil(documents.length / itemsPerPage);
+  const currentDocuments = documents.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
@@ -143,7 +160,7 @@ const DocumentsList = () => {
         {viewMode === "table" ? (
           <div className="border rounded-lg">
             <DocumentTable
-              documents={documents}
+              documents={currentDocuments}
               handleAction={handleAction}
               getStatusIcon={getStatusIcon}
               getStatusBadge={getStatusBadge}
@@ -152,7 +169,7 @@ const DocumentsList = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {documents.map((doc) => (
+            {currentDocuments.map((doc) => (
               <DocumentCard
                 key={doc.id}
                 doc={doc}
@@ -163,6 +180,58 @@ const DocumentsList = () => {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="mt-8">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentPage((p) => Math.max(1, p - 1));
+                }}
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink
+                href="#"
+                isActive={currentPage === 1}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentPage(1);
+                }}
+              >
+                1
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink
+                href="#"
+                isActive={currentPage === 2}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (totalPages >= 2) setCurrentPage(2);
+                }}
+              >
+                2
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentPage((p) => p + 1);
+                }}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
