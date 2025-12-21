@@ -14,6 +14,9 @@ export default function Home() {
             <Link href="/login">Login</Link>
           </li>
           <li>
+            <Link href="/search">Search</Link>
+          </li>
+          <li>
             <Link href="/documents">Documents</Link>
           </li>
         </ul>

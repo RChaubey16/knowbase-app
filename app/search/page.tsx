@@ -75,7 +75,7 @@ export default function SearchPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <TopBar title="Search" indexStatus="ready" />
+      <TopBar title="Search" indexStatus="ready" type="search" />
 
       <main className="flex-1 flex flex-col">
         {/* Hero Section with Search Input */}
