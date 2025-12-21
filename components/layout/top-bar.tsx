@@ -42,7 +42,7 @@ export function TopBar({ title, indexStatus }: TopBarProps) {
           </Badge>
         </div>
 
-        <Button className="h-9 px-4 gap-2 font-semibold shadow-sm transition-all hover:-translate-y-px active:translate-y-0 cursor-pointer">
+        <Button className="button">
           <Plus className="h-4 w-4 stroke-3" />
           Add Document
         </Button>
