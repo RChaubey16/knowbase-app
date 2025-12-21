@@ -1,0 +1,9 @@
+import DocumentsList from "@/components/documents/documents-list";
+
+export default function DocumentsPage() {
+  return (
+   <>
+   <DocumentsList/>
+   </>
+  )
+}
