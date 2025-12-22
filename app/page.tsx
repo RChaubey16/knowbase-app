@@ -19,6 +19,9 @@ export default function Home() {
           <li>
             <Link href="/documents">Documents</Link>
           </li>
+          <li>
+            <Link href="/organisation/create">Create Organisation</Link>
+          </li>
         </ul>
       </main>
     </div>

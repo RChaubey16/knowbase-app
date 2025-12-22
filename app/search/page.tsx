@@ -5,6 +5,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { SearchInput } from "@/components/search/search-input";
 import { SearchResults } from "@/components/search/search-results";
 import { SearchResult } from "@/types/search-result";
+import { Sidebar } from "@/components/layout/sidebar";
 
 // Mock data for demonstration - replace with actual API call
 const mockSearchResults: SearchResult[] = [
@@ -74,10 +75,11 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <TopBar title="Search" indexStatus="ready" type="search" />
+    <div className="flex min-h-screen">
+      <Sidebar />
 
       <main className="flex-1 flex flex-col">
+      <TopBar title="Search" indexStatus="ready" type="search" />
         {/* Hero Section with Search Input */}
         <section className="w-full px-6 py-12 bg-gradient-to-b from-muted/30 to-background">
           <div className="max-w-5xl mx-auto">
