@@ -11,6 +11,7 @@ interface TopBarProps {
   title: string;
   indexStatus: "ready" | "updating";
   type: "search" | "documents";
+  noWorkspaces?: boolean;
 }
 
 export function TopBar({ title, indexStatus, type }: TopBarProps) {
