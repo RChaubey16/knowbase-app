@@ -1,13 +1,17 @@
 "use client"
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Briefcase } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import CreateWorkspaceForm from '@/components/forms/create-workspace-form';
 
 export default function CreateWorkspaceCTA() {
-  const handleCreateWorkspace = () => {
-    console.log('Create workspace clicked');
-    // Navigate to workspace creation form
-  };
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
@@ -27,13 +31,17 @@ export default function CreateWorkspaceCTA() {
           </p>
         </div>
 
-        <Button 
-          onClick={handleCreateWorkspace}
-          className="mt-2 cursor-pointer"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Create Workspace
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="mt-2 cursor-pointer">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Workspace
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <CreateWorkspaceForm onSuccess={() => setOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
