@@ -1,17 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus, Briefcase } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import CreateWorkspaceForm from '@/components/forms/create-workspace-form';
+import { Button } from "@/components/ui/button";
+import { Plus, Briefcase } from "lucide-react";
+import { useCreateWorkspaceModal } from "@/components/modals/create-workspace-modal";
 
 export default function CreateWorkspaceCTA() {
-  const [open, setOpen] = useState(false);
+  const { open } = useCreateWorkspaceModal();
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
@@ -27,21 +21,15 @@ export default function CreateWorkspaceCTA() {
             Welcome! Let&apos;s get started
           </h2>
           <p className="text-muted-foreground">
-            You don&apos;t have any workspaces yet. Create your first workspace to start collaborating with your team and organizing your projects.
+            You don&apos;t have any workspaces yet. Create your first workspace to
+            start collaborating with your team and organizing your projects.
           </p>
         </div>
 
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="mt-2 cursor-pointer">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Workspace
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <CreateWorkspaceForm onSuccess={() => setOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        <Button className="mt-2" onClick={open}>
+          <Plus className="w-4 h-4 mr-2" />
+          Create Workspace
+        </Button>
       </div>
     </div>
   );

@@ -84,7 +84,7 @@ export function Sidebar({ organisations }: { organisations: OrganisationFields[]
 
         {/* Organisation Switcher */}
         <div className="border-b border-sidebar-border px-4 py-4">
-          <WorkspaceSwitcher swticherTitle="Organisations" spaces={organisations} />
+          <WorkspaceSwitcher swticherTitle="Organisations" buttonText="organisation" spaces={organisations} />
         </div>
 
         {/* Navigation Links */}

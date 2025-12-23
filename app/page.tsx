@@ -1,9 +1,9 @@
 import { ThemeToggle } from "@/components/theme-toggle";
-import { serverFetcher } from "@/lib/serrver-api";
+import { serverFetch } from "@/lib/fetch/server";
 import Link from "next/link";
 
 export default async function Home() {
-  const data = await serverFetcher('/auth/me')
+  const data = await serverFetch('/auth/me')
   console.log(`DATA`, data)
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background font-sans">

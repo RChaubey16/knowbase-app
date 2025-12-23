@@ -14,6 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { OrganisationFields } from "@/types/organisation";
 import { WorkspaceFields } from "@/types/workspace";
+import { useRouter } from "next/navigation";
+import { useCreateWorkspaceModal } from "../modals/create-workspace-modal";
 
 const workspaces = [
   {
@@ -33,12 +35,12 @@ const workspaces = [
   },
 ];
 
-export function WorkspaceSwitcher({ swticherTitle, spaces }: { swticherTitle: string; spaces: OrganisationFields[] | WorkspaceFields[] }) {
+export function WorkspaceSwitcher({ swticherTitle, buttonText, spaces }: { swticherTitle: string; buttonText: string; spaces: OrganisationFields[] | WorkspaceFields[] }) {
+  const router = useRouter();
+  const { open } = useCreateWorkspaceModal();
   const [selectedWorkspace, setSelectedWorkspace] = React.useState(
     spaces[0]
   );
-
-  console.log(`spaces`, spaces)
 
   return (
     <DropdownMenu>
@@ -79,9 +81,15 @@ export function WorkspaceSwitcher({ swticherTitle, spaces }: { swticherTitle: st
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex items-center gap-2 px-2 py-2">
+        <DropdownMenuItem className="flex items-center gap-2 px-2 py-2" onClick={() => {
+          if (buttonText === "workspace") {
+            open();
+          } else {
+            router.push(`/organisation/create`);
+          }
+        }}>
           <PlusCircle className="h-4 w-4" />
-          <span>Create {swticherTitle}</span>
+          <span>Create {buttonText}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
