@@ -5,8 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { clientFetch } from '@/lib/fetch/client';
+import { useRouter } from 'next/navigation';
+import { OrganisationFields } from '@/types/organisation';
 
 export default function CreateOrganisationForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     slug: ''
@@ -35,6 +39,24 @@ export default function CreateOrganisationForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setSubmitSuccess(false);
+
+    try {
+      const response: OrganisationFields = await clientFetch("/organisations", {
+        method: "POST",
+        body: JSON.stringify({
+          name: formData.name,
+          slug: formData.slug,
+        }),
+      });
+
+      console.log("RES", response);
+
+      router.push(`/organisation/${response.slug}`);
+    } catch {
+      console.error("Failed to create workspace");
+    } finally {
+      setIsSubmitting(false);
+    }
 
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));

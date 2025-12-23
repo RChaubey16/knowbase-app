@@ -50,6 +50,7 @@ export default async function OrganisationHomePage({ params }: PageProps) {
           title="Documents"
           indexStatus="ready"
           type="documents"
+          noWorkspaces={noWorkspaces}
           workspaces={workspaces}
         />
         {noWorkspaces ? (
