@@ -6,19 +6,21 @@ import { WorkspaceSwitcher } from "./workspace-switcher";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "../theme-toggle";
 import Link from "next/link";
+import { WorkspaceFields } from "@/types/workspace";
 
 interface TopBarProps {
   title: string;
   indexStatus: "ready" | "updating";
   type: "search" | "documents";
   noWorkspaces?: boolean;
+  workspaces: WorkspaceFields[];
 }
 
-export function TopBar({ title, indexStatus, type }: TopBarProps) {
+export function TopBar({ title, indexStatus, type, workspaces }: TopBarProps) {
   return (
     <div className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background/95 px-6 backdrop-blur-sm">
       <div className="flex items-center gap-4">
-        {/* <WorkspaceSwitcher /> */}
+        <WorkspaceSwitcher swticherTitle="Workspaces" spaces={workspaces} />
         <Separator orientation="vertical" className="h-6" />
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           {title}

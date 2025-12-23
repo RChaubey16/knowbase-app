@@ -1,4 +1,4 @@
-export type DocumentStatus = "indexed" | "processing" | "failed";
+export type DocumentStatus = "ready" | "processing" | "failed";
 
 export type ActionType = "view" | "edit" | "reindex" | "delete";
 
@@ -6,7 +6,9 @@ export interface Document {
   id: number;
   title: string;
   snippet: string;
-  sourceType: string;
+  source: string;
+  type: string;
   status: DocumentStatus;
-  updated: string;
+  updatedAt: string;
+  createdAt: string;
 }

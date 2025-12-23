@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Settings, Menu, X } from "lucide-react";
+import { FileText, Search, Settings, Menu, X } from "lucide-react";
 
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { OrganisationFields } from "@/types/organisation";
@@ -20,6 +20,11 @@ export function Sidebar({ organisations }: { organisations: OrganisationFields[]
       name: "Documents",
       href: "/documents",
       icon: FileText,
+    },
+    {
+      name: "Search",
+      href: "/search",
+      icon: Search,
     },
     {
       name: "Settings",

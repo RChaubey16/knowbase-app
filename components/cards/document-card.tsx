@@ -3,6 +3,7 @@ import { FileText, Link2, Clock } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import DocumentActionsDropdown from "../documents/document-actions-dropdown";
+import { timeAgo } from "@/lib/utils";
 
 interface DocumentCardProps {
   doc: Document;
@@ -46,16 +47,16 @@ const DocumentCard = ({
         <div className="flex items-center justify-between pt-2 border-t">
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              {doc.sourceType === "URL" ? (
+              {doc.source === "URL" ? (
                 <Link2 className="w-3.5 h-3.5" />
               ) : (
                 <FileText className="w-3.5 h-3.5" />
               )}
-              <span>{doc.sourceType}</span>
+              <span>{doc.source}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
-              <span>{doc.updated}</span>
+              <span>{timeAgo(doc.updatedAt)}</span>
             </div>
           </div>
           {getStatusBadge(doc.status)}

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { OrganisationFields } from "@/types/organisation";
+import { WorkspaceFields } from "@/types/workspace";
 
 const workspaces = [
   {
@@ -32,7 +33,7 @@ const workspaces = [
   },
 ];
 
-export function WorkspaceSwitcher({ swticherTitle, spaces }: { swticherTitle: string; spaces: OrganisationFields[] }) {
+export function WorkspaceSwitcher({ swticherTitle, spaces }: { swticherTitle: string; spaces: OrganisationFields[] | WorkspaceFields[] }) {
   const [selectedWorkspace, setSelectedWorkspace] = React.useState(
     spaces[0]
   );

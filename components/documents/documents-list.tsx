@@ -23,17 +23,17 @@ import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 
-const DocumentsList = () => {
+const DocumentsList = ({ documents }: { documents: Document[] }) => {
   const [viewMode, setViewMode] = useState<string>("table");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const [documents] = useState<Document[]>([
+  const [documentsList] = useState<Document[]>(documents || [
     {
       id: 1,
       title: "Product Requirements Document",
       snippet:
         "This document outlines the core features and specifications for the Q4 release...",
-      sourceType: "Manual",
+      source: "Manual",
       status: "indexed",
       updated: "2h ago",
     },
@@ -42,7 +42,7 @@ const DocumentsList = () => {
       title: "API Documentation",
       snippet:
         "Complete REST API reference with authentication, endpoints, and response formats...",
-      sourceType: "URL",
+      source: "URL",
       status: "indexed",
       updated: "5h ago",
     },
@@ -51,7 +51,7 @@ const DocumentsList = () => {
       title: "Marketing Strategy 2024",
       snippet:
         "Comprehensive marketing plan covering digital channels, budget allocation...",
-      sourceType: "Manual",
+      source: "Manual",
       status: "processing",
       updated: "1d ago",
     },
@@ -60,7 +60,7 @@ const DocumentsList = () => {
       title: "Technical Architecture Overview",
       snippet:
         "System design and infrastructure details for the microservices platform...",
-      sourceType: "URL",
+      source: "URL",
       status: "failed",
       updated: "3d ago",
     },
@@ -69,21 +69,21 @@ const DocumentsList = () => {
       title: "User Research Findings",
       snippet:
         "Analysis of user interviews and survey data from 150+ participants...",
-      sourceType: "Manual",
+      source: "Manual",
       status: "indexed",
       updated: "1w ago",
     },
   ]);
 
-  const totalPages = Math.ceil(documents.length / itemsPerPage);
-  const currentDocuments = documents.slice(
+  const totalPages = Math.ceil(documentsList.length / itemsPerPage);
+  const currentDocuments = documentsList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
   const getStatusIcon = (status: DocumentStatus) => {
     switch (status) {
-      case "indexed":
+      case "ready":
         return (
           <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-500" />
         );
@@ -105,7 +105,7 @@ const DocumentsList = () => {
       DocumentStatus,
       "default" | "secondary" | "destructive"
     > = {
-      indexed: "default",
+      ready: "default",
       processing: "secondary",
       failed: "destructive",
     };
@@ -168,7 +168,7 @@ const DocumentsList = () => {
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentDocuments.map((doc) => (
               <DocumentCard
                 key={doc.id}

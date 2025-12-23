@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import DocumentActionsDropdown from "../documents/document-actions-dropdown";
+import { timeAgo } from "@/lib/utils";
 
 interface DocumentTableProps {
   documents: Document[];
@@ -59,19 +60,19 @@ const DocumentTable = ({
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-1.5">
-                {doc.sourceType === "URL" ? (
+                {doc.source === "URL" ? (
                   <Link2 className="w-3.5 h-3.5 text-muted-foreground" />
                 ) : (
                   <FileText className="w-3.5 h-3.5 text-muted-foreground" />
                 )}
-                <span className="text-sm">{doc.sourceType}</span>
+                <span className="text-sm">{doc.source}</span>
               </div>
             </TableCell>
             <TableCell>{getStatusBadge(doc.status)}</TableCell>
             <TableCell>
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <Clock className="w-3.5 h-3.5" />
-                {doc.updated}
+                {timeAgo(doc.updatedAt)}
               </div>
             </TableCell>
             <TableCell>
