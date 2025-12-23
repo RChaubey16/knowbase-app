@@ -1,27 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
-import { apiFetch } from "@/lib/api";
 
 export function GoogleLoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await apiFetch("/auth/me");
-        console.log("ME:", await res.json());
-      } catch (err) {
-        console.log("Not logged in");
-      }
-    };
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     try {
+  //       const res = await clientFetcher("/auth/me");
+  //       console.log("ME:", res);
+  //     } catch (err) {
+  //       console.log("Not logged in");
+  //     }
+  //   };
 
-    checkAuth();
-  }, []);
+  //   checkAuth();
+  // }, []);
 
   const loginWithGoogle = async () => {
     console.log("Login with Google", process.env.NEXT_PUBLIC_API_BASE_URL);

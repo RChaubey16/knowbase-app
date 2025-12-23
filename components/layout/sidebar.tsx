@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FileText, Settings, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { FileText, Settings, Menu, X } from "lucide-react";
+
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { OrganisationFields } from "@/types/organisation";
 
 // Utility function for className merging
 const cn = (...classes: string[]) => classes.filter(Boolean).join(" ");
 
-export function Sidebar() {
+export function Sidebar({ organisations }: { organisations: OrganisationFields[] }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -77,7 +79,7 @@ export function Sidebar() {
 
         {/* Organisation Switcher */}
         <div className="border-b border-sidebar-border px-4 py-4">
-          <WorkspaceSwitcher />
+          <WorkspaceSwitcher swticherTitle="Organisations" spaces={organisations} />
         </div>
 
         {/* Navigation Links */}

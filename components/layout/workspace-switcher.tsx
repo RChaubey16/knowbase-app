@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { OrganisationFields } from "@/types/organisation";
 
 const workspaces = [
   {
@@ -31,10 +32,12 @@ const workspaces = [
   },
 ];
 
-export function WorkspaceSwitcher() {
+export function WorkspaceSwitcher({ swticherTitle, spaces }: { swticherTitle: string; spaces: OrganisationFields[] }) {
   const [selectedWorkspace, setSelectedWorkspace] = React.useState(
-    workspaces[0]
+    spaces[0]
   );
+
+  console.log(`spaces`, spaces)
 
   return (
     <DropdownMenu>
@@ -48,7 +51,7 @@ export function WorkspaceSwitcher() {
         >
           <div className="flex items-center gap-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
-              {selectedWorkspace.initials}
+              {selectedWorkspace.name[0]}
             </div>
             <span className="truncate">{selectedWorkspace.name}</span>
           </div>
@@ -57,16 +60,16 @@ export function WorkspaceSwitcher() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-60" align="start">
         <DropdownMenuLabel className="text-muted-foreground text-xs font-semibold uppercase tracking-wider px-2 py-1.5">
-          Workspaces
+          {swticherTitle}
         </DropdownMenuLabel>
-        {workspaces.map((workspace) => (
+        {spaces.map((workspace) => (
           <DropdownMenuItem
             key={workspace.id}
             onSelect={() => setSelectedWorkspace(workspace)}
             className="flex items-center gap-2 px-2 py-2"
           >
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-[10px] font-bold">
-              {workspace.initials}
+              {workspace.name[0]}
             </div>
             <span className="flex-1">{workspace.name}</span>
             {selectedWorkspace.id === workspace.id && (
@@ -77,7 +80,7 @@ export function WorkspaceSwitcher() {
         <DropdownMenuSeparator />
         <DropdownMenuItem className="flex items-center gap-2 px-2 py-2">
           <PlusCircle className="h-4 w-4" />
-          <span>Create Workspace</span>
+          <span>Create {swticherTitle}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

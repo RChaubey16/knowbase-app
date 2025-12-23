@@ -1,7 +1,10 @@
 import { ThemeToggle } from "@/components/theme-toggle";
+import { serverFetcher } from "@/lib/serrver-api";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
+  const data = await serverFetcher('/auth/me')
+  console.log(`DATA`, data)
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background font-sans">
       <div className="absolute top-4 right-4">
