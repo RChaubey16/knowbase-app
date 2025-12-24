@@ -18,19 +18,21 @@ export default async function OrganisationHomePage({ params }: PageProps) {
   const { slug } = await params;
 
   const organisations = await serverFetch<OrganisationFields[]>(
-    `/organisations/${slug}`
+    `/organisations`
   );
-
-  console.log(`organisations`, organisations)
 
   if (!organisations.length) {
     redirect("/organisation/create");
   }
 
-  const org = organisations[0];
+  const organisation = organisations.find((org) => org.slug === slug);
+
+  if (!organisation) {
+    redirect("/organisation/create");
+  }
 
   const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
-    headers: { "X-Organisation-Id": org.id },
+    headers: { "X-Organisation-Id": organisation.id },
   });
 
   const noWorkspaces = workspaces.length === 0;
@@ -38,13 +40,13 @@ export default async function OrganisationHomePage({ params }: PageProps) {
   const documents = !noWorkspaces
     ? await serverFetch<Document[]>(
         `/workspaces/${workspaces[0].id}/documents`,
-        { headers: { "X-Organisation-Id": org.id } }
+        { headers: { "X-Organisation-Id": organisation.id } }
       )
     : [];
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar organisations={organisations} />
+      <Sidebar organisations={organisations} currOrganisation={organisation} />
       <div className="flex flex-1 flex-col">
         <TopBar
           title="Documents"
@@ -64,4 +66,3 @@ export default async function OrganisationHomePage({ params }: PageProps) {
     </div>
   );
 }
-

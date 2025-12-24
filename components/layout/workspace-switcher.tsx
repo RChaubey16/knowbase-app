@@ -35,11 +35,21 @@ const workspaces = [
   },
 ];
 
-export function WorkspaceSwitcher({ swticherTitle, buttonText, spaces }: { swticherTitle: string; buttonText: string; spaces: OrganisationFields[] | WorkspaceFields[] }) {
+export function WorkspaceSwitcher({
+  swticherTitle,
+  buttonText,
+  spaces,
+  selectedSpace,
+}: {
+  swticherTitle: string;
+  buttonText: string;
+  spaces: OrganisationFields[] | WorkspaceFields[];
+  selectedSpace: OrganisationFields | WorkspaceFields;
+}) {
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();
   const [selectedWorkspace, setSelectedWorkspace] = React.useState(
-    spaces[0]
+    selectedSpace ?? spaces[0]
   );
 
   return (
@@ -68,7 +78,10 @@ export function WorkspaceSwitcher({ swticherTitle, buttonText, spaces }: { swtic
         {spaces.map((workspace) => (
           <DropdownMenuItem
             key={workspace.id}
-            onSelect={() => setSelectedWorkspace(workspace)}
+            onSelect={() => {
+              setSelectedWorkspace(workspace)
+              router.push(`/organisation/${workspace.slug}`)
+            }}
             className="flex items-center gap-2 px-2 py-2"
           >
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-[10px] font-bold">
@@ -81,13 +94,16 @@ export function WorkspaceSwitcher({ swticherTitle, buttonText, spaces }: { swtic
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex items-center gap-2 px-2 py-2" onClick={() => {
-          if (buttonText === "workspace") {
-            open();
-          } else {
-            router.push(`/organisation/create`);
-          }
-        }}>
+        <DropdownMenuItem
+          className="flex items-center gap-2 px-2 py-2"
+          onClick={() => {
+            if (buttonText === "workspace") {
+              open();
+            } else {
+              router.push(`/organisation/create`);
+            }
+          }}
+        >
           <PlusCircle className="h-4 w-4" />
           <span>Create {buttonText}</span>
         </DropdownMenuItem>

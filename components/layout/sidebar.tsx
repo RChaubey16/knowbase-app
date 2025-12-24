@@ -11,7 +11,13 @@ import { OrganisationFields } from "@/types/organisation";
 // Utility function for className merging
 const cn = (...classes: string[]) => classes.filter(Boolean).join(" ");
 
-export function Sidebar({ organisations }: { organisations: OrganisationFields[] }) {
+export function Sidebar({
+  organisations,
+  currOrganisation,
+}: {
+  organisations: OrganisationFields[];
+  currOrganisation: OrganisationFields;
+}) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -84,7 +90,12 @@ export function Sidebar({ organisations }: { organisations: OrganisationFields[]
 
         {/* Organisation Switcher */}
         <div className="border-b border-sidebar-border px-4 py-4">
-          <WorkspaceSwitcher swticherTitle="Organisations" buttonText="organisation" spaces={organisations} />
+          <WorkspaceSwitcher
+            swticherTitle="Organisations"
+            buttonText="organisation"
+            spaces={organisations}
+            selectedSpace={currOrganisation}
+          />
         </div>
 
         {/* Navigation Links */}
