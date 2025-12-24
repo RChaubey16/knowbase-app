@@ -1,6 +1,5 @@
 import CreateWorkspaceCTA from "@/components/cta/create-workspace-cta";
 import DocumentsList from "@/components/documents/documents-list";
-import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar } from "@/components/layout/top-bar";
 import { serverFetch } from "@/lib/fetch/server";
 import { Document } from "@/types/document";
@@ -17,15 +16,9 @@ type PageProps = {
 export default async function OrganisationHomePage({ params }: PageProps) {
   const { slug } = await params;
 
-  const organisations = await serverFetch<OrganisationFields[]>(
-    `/organisations`
+  const [organisation] = await serverFetch<OrganisationFields[]>(
+    `/organisations/${slug}`
   );
-
-  if (!organisations.length) {
-    redirect("/organisation/create");
-  }
-
-  const organisation = organisations.find((org) => org.slug === slug);
 
   if (!organisation) {
     redirect("/organisation/create");
@@ -45,24 +38,21 @@ export default async function OrganisationHomePage({ params }: PageProps) {
     : [];
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar organisations={organisations} currOrganisation={organisation} />
-      <div className="flex flex-1 flex-col">
-        <TopBar
-          title="Documents"
-          indexStatus="ready"
-          type="documents"
-          noWorkspaces={noWorkspaces}
-          workspaces={workspaces}
-        />
-        {noWorkspaces ? (
-          <CreateWorkspaceCTA />
-        ) : (
-          <main className="flex-1">
-            <DocumentsList documents={documents} />
-          </main>
-        )}
-      </div>
-    </div>
+    <>
+      <TopBar
+        title="Documents"
+        indexStatus="ready"
+        type="documents"
+        noWorkspaces={noWorkspaces}
+        workspaces={workspaces}
+      />
+      {noWorkspaces ? (
+        <CreateWorkspaceCTA />
+      ) : (
+        <main className="flex-1">
+          <DocumentsList documents={documents} />
+        </main>
+      )}
+    </>
   );
 }
