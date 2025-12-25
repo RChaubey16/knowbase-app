@@ -6,6 +6,7 @@ export interface Document {
   id: number;
   title: string;
   snippet: string;
+  content?: string;
   source: string;
   type: string;
   status: DocumentStatus;

@@ -21,6 +21,7 @@ export function Sidebar({
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const segments = pathname.split("/").filter(Boolean);
+  const currentSection = segments.at(-1);
 
   const navItems = [
     {
@@ -100,13 +101,16 @@ export function Sidebar({
         <nav className="flex-1 space-y-1 px-3 py-4">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname.includes(item.name.toLowerCase());
-            const itemHref = segments[segments.length - 1] = item.name.toLowerCase();
+            const section = item.name.toLowerCase();
+
+            const href = "/" + segments.slice(0, -1).concat(section).join("/");
+
+            const isActive = currentSection === section;
 
             return (
               <Link
-                key={itemHref}
-                href={itemHref}
+                key={section}
+                href={href}
                 onClick={closeMobileMenu}
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",

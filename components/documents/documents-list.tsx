@@ -19,61 +19,116 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
+import { timeAgo } from "@/lib/utils";
 
 const DocumentsList = ({ documents }: { documents: Document[] }) => {
   const [viewMode, setViewMode] = useState<string>("table");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const [documentsList] = useState<Document[]>(documents || [
-    {
-      id: 1,
-      title: "Product Requirements Document",
-      snippet:
-        "This document outlines the core features and specifications for the Q4 release...",
-      source: "Manual",
-      status: "indexed",
-      updated: "2h ago",
-    },
-    {
-      id: 2,
-      title: "API Documentation",
-      snippet:
-        "Complete REST API reference with authentication, endpoints, and response formats...",
-      source: "URL",
-      status: "indexed",
-      updated: "5h ago",
-    },
-    {
-      id: 3,
-      title: "Marketing Strategy 2024",
-      snippet:
-        "Comprehensive marketing plan covering digital channels, budget allocation...",
-      source: "Manual",
-      status: "processing",
-      updated: "1d ago",
-    },
-    {
-      id: 4,
-      title: "Technical Architecture Overview",
-      snippet:
-        "System design and infrastructure details for the microservices platform...",
-      source: "URL",
-      status: "failed",
-      updated: "3d ago",
-    },
-    {
-      id: 5,
-      title: "User Research Findings",
-      snippet:
-        "Analysis of user interviews and survey data from 150+ participants...",
-      source: "Manual",
-      status: "indexed",
-      updated: "1w ago",
-    },
-  ]);
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
+    null
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [documentsList] = useState<Document[]>(
+    documents || [
+      {
+        id: 1,
+        title: "Product Requirements Document",
+        snippet:
+          "This document outlines the core features and specifications for the Q4 release...",
+        source: "Manual",
+        status: "indexed",
+        updatedAt: "2h ago",
+      },
+      {
+        id: 2,
+        title: "API Documentation",
+        snippet:
+          "Complete REST API reference with authentication, endpoints, and response formats...",
+        content: `## API Documentation
+
+This API enables users to interact with our platform programmatically. 
+
+### Base URL
+\`https://api.example.com/v1\`
+
+### Authentication
+All requests must include an \`Authorization: Bearer <token>\` header.
+
+### Endpoints
+
+- **GET /users**: Retrieve a list of users.
+- **POST /projects**: Create a new project.
+- **DELETE /documents/{id}**: Remove a document.
+
+### Error Handling
+Errors are returned as JSON with the following structure:
+\`\`\`json
+{
+  "error": "Not Found",
+  "message": "The requested resource does not exist.",
+  "status": 404
+}
+\`\`\`
+`,
+        source: "URL",
+        status: "indexed",
+        updatedAt: "5h ago",
+      },
+      {
+        id: 3,
+        title: "Marketing Strategy 2024",
+        snippet:
+          "Comprehensive marketing plan covering digital channels, budget allocation...",
+        source: "Manual",
+        status: "processing",
+        updatedAt: "1d ago",
+      },
+      {
+        id: 4,
+        title: "Technical Architecture Overview",
+        snippet:
+          "System design and infrastructure details for the microservices platform...",
+        source: "URL",
+        status: "failed",
+        updatedAt: "3d ago",
+      },
+      {
+        id: 5,
+        title: "User Research Findings",
+        snippet:
+          "Analysis of user interviews and survey data from 150+ participants...",
+        content: `# User Research Findings - Q4 2023
+
+## Executive Summary
+Our research shows that users are primarily looking for faster navigation and improved collaboration tools.
+
+## Key Insights
+1. **Navigation**: 65% of users find it difficult to locate advanced settings.
+2. **Collaboration**: User interest in real-time document editing has increased by 40%.
+3. **Themes**: Dark mode remains the most requested UI feature.
+
+## Recommendations
+- Redesign the global navigation menu.
+- Prioritize real-time WebSocket implementation for editors.
+- Introduce customizable dashboard themes.
+`,
+        source: "Manual",
+        status: "indexed",
+        updatedAt: "1w ago",
+      },
+    ]
+  );
 
   const totalPages = Math.ceil(documentsList.length / itemsPerPage);
   const currentDocuments = documentsList.slice(
@@ -118,7 +173,10 @@ const DocumentsList = ({ documents }: { documents: Document[] }) => {
 
   const handleAction = (action: ActionType, doc: Document) => {
     console.log(`${action} document:`, doc);
-    // Handle actions here
+    if (action === "view") {
+      setSelectedDocument(doc);
+      setIsModalOpen(true);
+    }
   };
 
   const getRowClassName = (status: DocumentStatus) => {
@@ -233,6 +291,31 @@ const DocumentsList = ({ documents }: { documents: Document[] }) => {
           </PaginationContent>
         </Pagination>
       </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              {selectedDocument?.title}
+            </DialogTitle>
+            <DialogDescription>
+              Last updated: {timeAgo(selectedDocument?.updatedAt)}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4 prose dark:prose-invert max-w-none">
+            {selectedDocument?.content ? (
+              <div className="whitespace-pre-wrap leading-relaxed">
+                {selectedDocument.content}
+              </div>
+            ) : (
+              <p className="text-muted-foreground italic">
+                No content available for this document.
+              </p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
