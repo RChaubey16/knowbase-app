@@ -44,7 +44,7 @@ export function WorkspaceSwitcher({
   swticherTitle: string;
   buttonText: string;
   spaces: OrganisationFields[] | WorkspaceFields[];
-  selectedSpace: OrganisationFields | WorkspaceFields;
+  selectedSpace?: OrganisationFields | WorkspaceFields;
 }) {
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();

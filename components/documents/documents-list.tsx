@@ -299,7 +299,7 @@ Our research shows that users are primarily looking for faster navigation and im
               {selectedDocument?.title}
             </DialogTitle>
             <DialogDescription>
-              Last updated: {timeAgo(selectedDocument?.updatedAt)}
+              Last updated: {timeAgo(selectedDocument?.updatedAt || "")}
             </DialogDescription>
           </DialogHeader>
 

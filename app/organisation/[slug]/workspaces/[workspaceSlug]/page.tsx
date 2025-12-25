@@ -6,10 +6,7 @@ import { WorkspaceFields } from "@/types/workspace";
 import { notFound } from "next/navigation";
 
 interface PageProps {
-  params: {
-    slug: string;
-    workspaceSlug: string;
-  };
+  params: Promise<{ slug: string; workspaceSlug: string }>;
 }
 
 export default async function WorkspacePage({ params }: PageProps) {

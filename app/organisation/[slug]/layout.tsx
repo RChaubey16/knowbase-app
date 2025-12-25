@@ -9,7 +9,7 @@ export default async function OrganisationLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
 
@@ -31,9 +31,7 @@ export default async function OrganisationLayout({
         organisations={organisations}
         currOrganisation={currOrganisation}
       />
-      <div className="flex flex-1 flex-col">
-        {children}
-      </div>
+      <div className="flex flex-1 flex-col">{children}</div>
     </div>
   );
 }

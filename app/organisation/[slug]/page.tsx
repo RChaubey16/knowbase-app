@@ -6,9 +6,7 @@ import { OrganisationFields } from "@/types/organisation";
 import { WorkspaceFields } from "@/types/workspace";
 
 type PageProps = {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>;
 };
 
 export default async function OrganisationHomePage({ params }: PageProps) {
