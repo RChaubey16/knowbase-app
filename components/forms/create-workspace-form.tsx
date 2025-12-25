@@ -25,13 +25,13 @@ export default function CreateWorkspaceForm({ onSuccess }: { onSuccess?: () => v
     setFormData({ name, slug });
   };
 
-  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const slug = e.target.value
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, '');
+  // const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const slug = e.target.value
+  //     .toLowerCase()
+  //     .replace(/[^a-z0-9-]/g, '');
     
-    setFormData({ ...formData, slug });
-  };
+  //   setFormData({ ...formData, slug });
+  // };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -76,7 +76,7 @@ export default function CreateWorkspaceForm({ onSuccess }: { onSuccess?: () => v
           />
         </div>
 
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <Label htmlFor="workspace-slug">Workspace Slug</Label>
           <Input
             id="workspace-slug"
@@ -90,7 +90,7 @@ export default function CreateWorkspaceForm({ onSuccess }: { onSuccess?: () => v
           <p className="text-[0.8rem] text-muted-foreground">
             URL-friendly identifier
           </p>
-        </div>
+        </div> */}
 
         {submitSuccess && (
           <Alert>

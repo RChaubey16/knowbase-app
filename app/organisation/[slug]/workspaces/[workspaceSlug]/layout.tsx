@@ -1,17 +1,16 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import CreateWorkspaceCTA from "@/components/cta/create-workspace-cta";
+import { TopBar } from "@/components/layout/top-bar";
 import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
 import { WorkspaceFields } from "@/types/workspace";
+import { notFound } from "next/navigation";
 
-type PageProps = {
-  params: {
-    slug: string;
-  };
-};
-
-export default async function OrganisationHomePage({ params }: PageProps) {
+export default async function WorkspaceLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { slug: string };
+}) {
   const { slug } = await params;
 
   const [currOrganisation] = await serverFetch<OrganisationFields[]>(
@@ -32,17 +31,14 @@ export default async function OrganisationHomePage({ params }: PageProps) {
 
   return (
     <>
-      {!noWorkspaces &&
-        workspaces.map((workspace) => (
-          <Link
-            href={`/organisation/${slug}/workspaces/${workspace.slug}`}
-            key={workspace.id}
-          >
-            {workspace.name}
-          </Link>
-        ))}
-
-      {noWorkspaces && <CreateWorkspaceCTA />}
+      <TopBar
+        title="Documents"
+        indexStatus="ready"
+        type="documents"
+        noWorkspaces={noWorkspaces}
+        workspaces={workspaces}
+      />
+      <div className="flex flex-1 flex-col">{children}</div>
     </>
   );
 }
