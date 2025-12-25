@@ -20,6 +20,10 @@ export async function serverFetch<T>(
   const { params, headers, ...rest } = options;
   const cookieStore = await cookies();
 
+
+  const organisationId = cookieStore.get("X-Organisation-Id")?.value;
+
+
   const url = new URL(endpoint, API_BASE_URL);
   if (params) {
     for (const [key, value] of Object.entries(params)) {
@@ -32,10 +36,15 @@ export async function serverFetch<T>(
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
+  console.log("ORG ID HEADER", organisationId)
+
   const res = await fetch(url.toString(), {
     ...rest,
     headers: {
       Cookie: cookieHeader,
+      ...(organisationId && {
+        "X-Organisation-Id": organisationId,
+      }),
       ...(headers || {}),
     },
     cache: rest.cache ?? "no-store",
@@ -45,9 +54,13 @@ export async function serverFetch<T>(
     redirect("/login");
   }
 
+
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error(`API_ERROR_${res.status}`);
+    // 🔑 Wrap backend message in a real Error
+    throw new Error(data.message ?? "Request failed");
   }
 
-  return res.json();
+  return data as T;
 }

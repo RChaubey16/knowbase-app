@@ -81,9 +81,12 @@ export async function clientFetch<T>(
     }
   }
 
+  const data = await res.json();
+
   if (!res.ok) {
-    throw new Error(`API_ERROR_${res.status}`);
+    // 🔑 Wrap backend message in a real Error
+    throw new Error(data.message ?? "Request failed");
   }
 
-  return res.json();
+  return data as T;
 }

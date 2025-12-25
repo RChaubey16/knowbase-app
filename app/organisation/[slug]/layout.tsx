@@ -1,3 +1,4 @@
+import SetOrganisation from "@/app/set-organisation";
 import { Sidebar } from "@/components/layout/sidebar";
 import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
@@ -25,6 +26,7 @@ export default async function OrganisationLayout({
 
   return (
     <div className="flex min-h-screen">
+      <SetOrganisation orgId={currOrganisation.id} />
       <Sidebar
         organisations={organisations}
         currOrganisation={currOrganisation}

@@ -17,6 +17,7 @@ export default function CreateOrganisationForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
@@ -39,6 +40,7 @@ export default function CreateOrganisationForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setSubmitSuccess(false);
+    setError(null);
 
     try {
       const response: OrganisationFields = await clientFetch("/organisations", {
@@ -51,19 +53,18 @@ export default function CreateOrganisationForm() {
 
       console.log("RES", response);
 
+      setSubmitSuccess(true);
       router.push(`/organisation/${response.slug}`);
-    } catch {
-      console.error("Failed to create workspace");
+    } catch (err: unknown) {
+      console.error("ERROR:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong while creating the organisation.");
+      }
     } finally {
       setIsSubmitting(false);
     }
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Form submitted:', formData);
-    setSubmitSuccess(true);
-    setIsSubmitting(false);
   };
 
   const isFormValid = formData.name.trim() && formData.slug.trim();
@@ -110,6 +111,14 @@ export default function CreateOrganisationForm() {
               URL-friendly identifier (lowercase, hyphens only)
             </p>
           </div>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                {error}
+              </AlertDescription>
+            </Alert>
+          )}
 
           {submitSuccess && (
             <Alert>

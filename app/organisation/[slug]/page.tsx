@@ -3,9 +3,7 @@ import DocumentsList from "@/components/documents/documents-list";
 import { TopBar } from "@/components/layout/top-bar";
 import { serverFetch } from "@/lib/fetch/server";
 import { Document } from "@/types/document";
-import { OrganisationFields } from "@/types/organisation";
 import { WorkspaceFields } from "@/types/workspace";
-import { redirect } from "next/navigation";
 
 type PageProps = {
   params: {
@@ -16,25 +14,12 @@ type PageProps = {
 export default async function OrganisationHomePage({ params }: PageProps) {
   const { slug } = await params;
 
-  const [organisation] = await serverFetch<OrganisationFields[]>(
-    `/organisations/${slug}`
-  );
-
-  if (!organisation) {
-    redirect("/organisation/create");
-  }
-
-  const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
-    headers: { "X-Organisation-Id": organisation.id },
-  });
+  const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces");
 
   const noWorkspaces = workspaces.length === 0;
 
   const documents = !noWorkspaces
-    ? await serverFetch<Document[]>(
-        `/workspaces/${workspaces[0].id}/documents`,
-        { headers: { "X-Organisation-Id": organisation.id } }
-      )
+    ? await serverFetch<Document[]>(`/workspaces/${workspaces[0].id}/documents`)
     : [];
 
   return (
