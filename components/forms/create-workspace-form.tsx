@@ -1,57 +1,65 @@
+"use client";
 
-"use client"
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { clientFetch } from "@/lib/fetch/client";
+import { WorkspaceFields } from "@/types/workspace";
 
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-
-export default function CreateWorkspaceForm({ onSuccess }: { onSuccess?: () => void }) {
+export default function CreateWorkspaceForm({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+}) {
   const [formData, setFormData] = useState({
-    name: '',
-    slug: ''
+    name: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
-    const slug = name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-    
-    setFormData({ name, slug });
+    setFormData({ name });
+    setError(null);
   };
 
-  // const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const slug = e.target.value
-  //     .toLowerCase()
-  //     .replace(/[^a-z0-9-]/g, '');
-    
-  //   setFormData({ ...formData, slug });
-  // };
-
   const handleSubmit = async () => {
+    if (!formData.name.trim()) {
+      setError("Workspace name is required.");
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitSuccess(false);
+    setError(null);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('Workspace Created:', formData);
-    setSubmitSuccess(true);
-    setIsSubmitting(false);
-    
-    if (onSuccess) {
-      setTimeout(() => {
-        onSuccess();
-      }, 500);
+    try {
+      // TODO: Need to add org-id header
+      const response: WorkspaceFields = await clientFetch("/workspaces", {
+        method: "POST",
+        body: JSON.stringify({
+          name: formData.name
+        }),
+      });
+
+      console.log("RES", response);
+
+      setSubmitSuccess(true);
+      if (onSuccess) {
+        setTimeout(onSuccess, 500);
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to create workspace. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const isFormValid = formData.name.trim() && formData.slug.trim();
+  const isFormValid = formData.name.trim();
 
   return (
     <div className="space-y-6">
@@ -76,27 +84,15 @@ export default function CreateWorkspaceForm({ onSuccess }: { onSuccess?: () => v
           />
         </div>
 
-        {/* <div className="space-y-2">
-          <Label htmlFor="workspace-slug">Workspace Slug</Label>
-          <Input
-            id="workspace-slug"
-            type="text"
-            placeholder="e.g., engineering-team"
-            value={formData.slug}
-            onChange={handleSlugChange}
-            required
-            className="w-full font-mono text-sm"
-          />
-          <p className="text-[0.8rem] text-muted-foreground">
-            URL-friendly identifier
-          </p>
-        </div> */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
         {submitSuccess && (
           <Alert>
-            <AlertDescription>
-              Workspace created successfully!
-            </AlertDescription>
+            <AlertDescription>Workspace created successfully!</AlertDescription>
           </Alert>
         )}
 
@@ -105,7 +101,7 @@ export default function CreateWorkspaceForm({ onSuccess }: { onSuccess?: () => v
           className="w-full"
           disabled={!isFormValid || isSubmitting}
         >
-          {isSubmitting ? 'Creating...' : 'Create Workspace'}
+          {isSubmitting ? "Creating..." : "Create Workspace"}
         </Button>
       </div>
     </div>

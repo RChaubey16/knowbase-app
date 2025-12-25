@@ -35,7 +35,7 @@ export default async function OrganisationHomePage({ params }: PageProps) {
       {!noWorkspaces &&
         workspaces.map((workspace) => (
           <Link
-            href={`/organisation/${slug}/workspaces/${workspace.slug}`}
+            href={`/organisation/${slug}/workspaces/${workspace.slug}/documents`}
             key={workspace.id}
           >
             {workspace.name}
