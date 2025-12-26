@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Briefcase } from "lucide-react";
 import { useCreateWorkspaceModal } from "@/components/modals/create-workspace-modal";
 
-export default function CreateWorkspaceCTA() {
+export default function CreateWorkspaceCTA({ organisationId, currOrganisationSlug }: { organisationId: string, currOrganisationSlug: string }) {
   const { open } = useCreateWorkspaceModal();
 
   return (
@@ -26,7 +26,7 @@ export default function CreateWorkspaceCTA() {
           </p>
         </div>
 
-        <Button className="mt-2" onClick={open}>
+        <Button className="mt-2" onClick={() => open(organisationId, currOrganisationSlug)}>
           <Plus className="w-4 h-4 mr-2" />
           Create Workspace
         </Button>

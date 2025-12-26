@@ -37,6 +37,7 @@ export default async function WorkspaceLayout({
         type="documents"
         noWorkspaces={noWorkspaces}
         workspaces={workspaces}
+        orgSlug={slug}
       />
       <div className="flex flex-1 flex-col">{children}</div>
     </>

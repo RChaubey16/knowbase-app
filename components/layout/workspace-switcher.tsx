@@ -40,11 +40,13 @@ export function WorkspaceSwitcher({
   buttonText,
   spaces,
   selectedSpace,
+  orgSlug
 }: {
   swticherTitle: string;
   buttonText: string;
   spaces: OrganisationFields[] | WorkspaceFields[];
   selectedSpace?: OrganisationFields | WorkspaceFields;
+  orgSlug?: string;
 }) {
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();
@@ -98,7 +100,8 @@ export function WorkspaceSwitcher({
           className="flex items-center gap-2 px-2 py-2"
           onClick={() => {
             if (buttonText === "workspace") {
-              open();
+              const workspace = selectedWorkspace as WorkspaceFields;
+              open(workspace.organisationId, orgSlug);
             } else {
               router.push(`/organisation/create`);
             }

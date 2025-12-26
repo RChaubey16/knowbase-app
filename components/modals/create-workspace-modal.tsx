@@ -1,18 +1,16 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import CreateWorkspaceForm from "../forms/create-workspace-form";
 
 type ModalContextType = {
-  open: () => void;
+  open: (organisationId?: string, organisationSlug?: string) => void;
 };
 
-const CreateWorkspaceModalContext =
-  createContext<ModalContextType | null>(null);
+const CreateWorkspaceModalContext = createContext<ModalContextType | null>(
+  null
+);
 
 export function CreateWorkspaceModalProvider({
   children,
@@ -20,15 +18,28 @@ export function CreateWorkspaceModalProvider({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [organisation, setOrganisation] = useState<
+    { id?: string; slug?: string } | undefined
+  >();
+
+  const handleOpen = (id?: string, slug?: string) => {
+    setOrganisation({
+      id,
+      slug,
+    });
+    setOpen(true);
+  };
 
   return (
-    <CreateWorkspaceModalContext.Provider
-      value={{ open: () => setOpen(true) }}
-    >
+    <CreateWorkspaceModalContext.Provider value={{ open: handleOpen }}>
       {children}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
-          <CreateWorkspaceForm onSuccess={() => setOpen(false)} />
+          <CreateWorkspaceForm
+            organisationId={organisation?.id}
+            organisationSlug={organisation?.slug}
+            onSuccess={() => setOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </CreateWorkspaceModalContext.Provider>

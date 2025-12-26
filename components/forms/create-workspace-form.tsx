@@ -7,10 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { clientFetch } from "@/lib/fetch/client";
 import { WorkspaceFields } from "@/types/workspace";
+import { useRouter } from "next/navigation";
 
 export default function CreateWorkspaceForm({
+  organisationId,
+  organisationSlug,
   onSuccess,
 }: {
+  organisationId?: string;
+  organisationSlug?: string;
   onSuccess?: () => void;
 }) {
   const [formData, setFormData] = useState({
@@ -19,12 +24,15 @@ export default function CreateWorkspaceForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
     setFormData({ name });
     setError(null);
   };
+
+  console.log(`ORG SLUF`, organisationSlug);
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
@@ -37,15 +45,21 @@ export default function CreateWorkspaceForm({
     setError(null);
 
     try {
-      // TODO: Need to add org-id header
       const response: WorkspaceFields = await clientFetch("/workspaces", {
         method: "POST",
+        headers: {
+          "X-Organisation-Id": organisationId ?? "",
+        },
         body: JSON.stringify({
-          name: formData.name
+          name: formData.name,
         }),
       });
 
+      console.log(`RESP`, response);
       setSubmitSuccess(true);
+      router.push(
+        `/organisation/${organisationSlug}/workspaces/${response.slug}/documents`
+      );
       if (onSuccess) {
         setTimeout(onSuccess, 500);
       }

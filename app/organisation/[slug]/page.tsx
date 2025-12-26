@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import CreateWorkspaceCTA from "@/components/cta/create-workspace-cta";
 import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
@@ -23,6 +23,11 @@ export default async function OrganisationHomePage({ params }: PageProps) {
   const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces");
   const noWorkspaces = workspaces.length === 0;
 
+  if (!noWorkspaces) {
+    const [workspace] = workspaces;
+    redirect(`/organisation/${slug}/workspaces/${workspace.slug}/documents`)
+  }
+
   return (
     <>
       {!noWorkspaces &&
@@ -35,7 +40,7 @@ export default async function OrganisationHomePage({ params }: PageProps) {
           </Link>
         ))}
 
-      {noWorkspaces && <CreateWorkspaceCTA />}
+      {noWorkspaces && <CreateWorkspaceCTA organisationId={currOrganisation.id} currOrganisationSlug={slug} />}
     </>
   );
 }
