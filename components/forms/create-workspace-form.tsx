@@ -45,8 +45,6 @@ export default function CreateWorkspaceForm({
         }),
       });
 
-      console.log("RES", response);
-
       setSubmitSuccess(true);
       if (onSuccess) {
         setTimeout(onSuccess, 500);

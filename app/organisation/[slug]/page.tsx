@@ -20,12 +20,7 @@ export default async function OrganisationHomePage({ params }: PageProps) {
     notFound();
   }
 
-  const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
-    headers: {
-      "X-Organisation-Id": currOrganisation.id,
-    },
-  });
-
+  const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces");
   const noWorkspaces = workspaces.length === 0;
 
   return (

@@ -51,8 +51,6 @@ export default function CreateOrganisationForm() {
         }),
       });
 
-      console.log("RES", response);
-
       setSubmitSuccess(true);
       router.push(`/organisation/${response.slug}`);
     } catch (err: unknown) {
