@@ -15,9 +15,13 @@ interface TopBarProps {
   noWorkspaces?: boolean;
   workspaces: WorkspaceFields[];
   orgSlug: string;
+  workspaceSlug?: string;
 }
 
-export function TopBar({ title, indexStatus, type, noWorkspaces, workspaces, orgSlug }: TopBarProps) {
+export function TopBar({ title, indexStatus, type, noWorkspaces, workspaces, orgSlug, workspaceSlug }: TopBarProps) {
+
+  const selectedWorkspace = workspaces.find((workspace) => workspace.slug === workspaceSlug);
+
   return (
     <div className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background/95 px-6 backdrop-blur-sm">
       <div className="flex items-center gap-4">
@@ -27,6 +31,7 @@ export function TopBar({ title, indexStatus, type, noWorkspaces, workspaces, org
             buttonText="workspace"
             spaces={workspaces}
             orgSlug={orgSlug}
+            selectedSpace={selectedWorkspace}
           />
         )}
         <Separator orientation="vertical" className="h-6" />

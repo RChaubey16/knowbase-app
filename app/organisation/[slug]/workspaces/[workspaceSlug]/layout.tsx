@@ -9,9 +9,9 @@ export default async function WorkspaceLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; workspaceSlug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, workspaceSlug } = await params;
 
   const [currOrganisation] = await serverFetch<OrganisationFields[]>(
     `/organisations/${slug}`
@@ -26,7 +26,6 @@ export default async function WorkspaceLayout({
       "X-Organisation-Id": currOrganisation.id,
     },
   });
-
   const noWorkspaces = workspaces.length === 0;
 
   return (
@@ -38,6 +37,7 @@ export default async function WorkspaceLayout({
         noWorkspaces={noWorkspaces}
         workspaces={workspaces}
         orgSlug={slug}
+        workspaceSlug={workspaceSlug}
       />
       <div className="flex flex-1 flex-col">{children}</div>
     </>
