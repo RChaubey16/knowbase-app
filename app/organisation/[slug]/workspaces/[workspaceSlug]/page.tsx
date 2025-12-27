@@ -16,7 +16,7 @@ export default async function WorkspacePage({ params }: PageProps) {
   return (
     <div className="space-y-6">
       <main className="flex-1">
-        <DocumentsList documents={documents} />
+        <DocumentsList documents={documents} workspaceSlug={workspaceSlug} />
       </main>
     </div>
   );

@@ -1,3 +1,5 @@
+"use client";
+
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -5,6 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "../theme-toggle";
+import {
+  AddDocumentModalProvider,
+  useAddDocumentModal,
+} from "../modals/add-document-modal";
 import Link from "next/link";
 import { WorkspaceFields } from "@/types/workspace";
 
@@ -18,9 +24,27 @@ interface TopBarProps {
   workspaceSlug?: string;
 }
 
-export function TopBar({ title, indexStatus, type, noWorkspaces, workspaces, orgSlug, workspaceSlug }: TopBarProps) {
+export function TopBar(props: TopBarProps) {
+  return (
+    <AddDocumentModalProvider>
+      <TopBarContent {...props} />
+    </AddDocumentModalProvider>
+  );
+}
 
-  const selectedWorkspace = workspaces.find((workspace) => workspace.slug === workspaceSlug);
+function TopBarContent({
+  title,
+  indexStatus,
+  type,
+  noWorkspaces,
+  workspaces,
+  orgSlug,
+  workspaceSlug,
+}: TopBarProps) {
+  const { open } = useAddDocumentModal();
+  const selectedWorkspace = workspaces.find(
+    (workspace) => workspace.slug === workspaceSlug
+  );
 
   return (
     <div className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b bg-background/95 px-6 backdrop-blur-sm">
@@ -64,8 +88,8 @@ export function TopBar({ title, indexStatus, type, noWorkspaces, workspaces, org
                 {indexStatus}
               </Badge>
             </div>
-
-            <Button className="button">
+            +{" "}
+            <Button className="button" onClick={() => open(selectedWorkspace)}>
               <Plus className="h-4 w-4 stroke-3" />
               Add Document
             </Button>

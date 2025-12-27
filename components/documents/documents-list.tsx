@@ -30,8 +30,15 @@ import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import { timeAgo } from "@/lib/utils";
+import { clientFetch } from "@/lib/fetch/client";
 
-const DocumentsList = ({ documents }: { documents: Document[] }) => {
+const DocumentsList = ({
+  documents,
+  workspaceSlug,
+}: {
+  documents: Document[];
+  workspaceSlug: string;
+}) => {
   const [viewMode, setViewMode] = useState<string>("table");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -171,11 +178,33 @@ Our research shows that users are primarily looking for faster navigation and im
     );
   };
 
-  const handleAction = (action: ActionType, doc: Document) => {
+  const handleAction = async (action: ActionType, doc: Document) => {
     console.log(`${action} document:`, doc);
     if (action === "view") {
       setSelectedDocument(doc);
       setIsModalOpen(true);
+    } else if (action === "delete") {
+      try {
+        const response: Response = await clientFetch(
+          `/workspaces/${workspaceSlug}/documents/${doc.id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Organisation-Id": "12266b48-413d-4a31-86b3-4e9f70bda195",
+            },
+          }
+        );
+        
+        console.log(`RESP`, response)
+
+        if (!response.ok) {
+          console.error("Failed to delete document. Please try again.");
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 

@@ -81,6 +81,10 @@ export async function clientFetch<T>(
     }
   }
 
+  if (res.status === 204) {
+    return true as T;
+  }
+
   const data = await res.json();
 
   if (!res.ok) {
