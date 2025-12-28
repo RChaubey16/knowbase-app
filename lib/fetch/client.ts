@@ -81,10 +81,9 @@ export async function clientFetch<T>(
     }
   }
 
+  // 🔑 handle 204
   if (res.status === 204) {
-    return {
-      status: 204,
-    } as T;
+    return null as T;
   }
 
   const data = await res.json();

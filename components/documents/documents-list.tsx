@@ -30,15 +30,72 @@ import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import { timeAgo } from "@/lib/utils";
-import { clientFetch } from "@/lib/fetch/client";
+import { deleteDocumentAction } from "@/app/actions/documents";
+import { useRouter } from "next/navigation";
+
+const MOCK_DOCUMENTS: Document[] = [
+  {
+    id: 1,
+    title: "Product Requirements Document",
+    snippet: "This document outlines the core features and specifications for the Q4 release...",
+    content: "Draft content... ",
+    source: "Manual",
+    type: "text",
+    status: "ready",
+    updatedAt: "2h ago",
+    createdAt: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: 2,
+    title: "API Documentation",
+    snippet: "Complete REST API reference with authentication, endpoints, and response formats...",
+    content: "## API Documentation...",
+    source: "URL",
+    type: "url",
+    status: "ready",
+    updatedAt: "5h ago",
+    createdAt: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: 3,
+    title: "Marketing Strategy 2024",
+    snippet: "Comprehensive marketing plan covering digital channels, budget allocation...",
+    content: "Marketing plan...",
+    source: "Manual",
+    type: "text",
+    status: "processing",
+    updatedAt: "1d ago",
+    createdAt: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: 4,
+    title: "Technical Architecture Overview",
+    snippet: "System design and infrastructure details for the microservices platform...",
+    content: "Architecture details...",
+    source: "URL",
+    type: "url",
+    status: "failed",
+    updatedAt: "3d ago",
+    createdAt: "2024-01-01T00:00:00Z",
+  },
+  {
+    id: 5,
+    title: "User Research Findings",
+    snippet: "Analysis of user interviews and survey data from 150+ participants...",
+    content: "# User Research Findings...",
+    source: "Manual",
+    type: "text",
+    status: "ready",
+    updatedAt: "1w ago",
+    createdAt: "2024-01-01T00:00:00Z",
+  },
+];
 
 const DocumentsList = ({
   documents,
   workspaceSlug,
-  orgSlug,
 }: {
   documents: Document[];
-  orgSlug: string;
   workspaceSlug: string;
 }) => {
   const [viewMode, setViewMode] = useState<string>("table");
@@ -48,96 +105,19 @@ const DocumentsList = ({
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [documentsList] = useState<Document[]>(
-    documents || [
-      {
-        id: 1,
-        title: "Product Requirements Document",
-        snippet:
-          "This document outlines the core features and specifications for the Q4 release...",
-        source: "Manual",
-        status: "indexed",
-        updatedAt: "2h ago",
-      },
-      {
-        id: 2,
-        title: "API Documentation",
-        snippet:
-          "Complete REST API reference with authentication, endpoints, and response formats...",
-        content: `## API Documentation
 
-This API enables users to interact with our platform programmatically. 
-
-### Base URL
-\`https://api.example.com/v1\`
-
-### Authentication
-All requests must include an \`Authorization: Bearer <token>\` header.
-
-### Endpoints
-
-- **GET /users**: Retrieve a list of users.
-- **POST /projects**: Create a new project.
-- **DELETE /documents/{id}**: Remove a document.
-
-### Error Handling
-Errors are returned as JSON with the following structure:
-\`\`\`json
-{
-  "error": "Not Found",
-  "message": "The requested resource does not exist.",
-  "status": 404
-}
-\`\`\`
-`,
-        source: "URL",
-        status: "indexed",
-        updatedAt: "5h ago",
-      },
-      {
-        id: 3,
-        title: "Marketing Strategy 2024",
-        snippet:
-          "Comprehensive marketing plan covering digital channels, budget allocation...",
-        source: "Manual",
-        status: "processing",
-        updatedAt: "1d ago",
-      },
-      {
-        id: 4,
-        title: "Technical Architecture Overview",
-        snippet:
-          "System design and infrastructure details for the microservices platform...",
-        source: "URL",
-        status: "failed",
-        updatedAt: "3d ago",
-      },
-      {
-        id: 5,
-        title: "User Research Findings",
-        snippet:
-          "Analysis of user interviews and survey data from 150+ participants...",
-        content: `# User Research Findings - Q4 2023
-
-## Executive Summary
-Our research shows that users are primarily looking for faster navigation and improved collaboration tools.
-
-## Key Insights
-1. **Navigation**: 65% of users find it difficult to locate advanced settings.
-2. **Collaboration**: User interest in real-time document editing has increased by 40%.
-3. **Themes**: Dark mode remains the most requested UI feature.
-
-## Recommendations
-- Redesign the global navigation menu.
-- Prioritize real-time WebSocket implementation for editors.
-- Introduce customizable dashboard themes.
-`,
-        source: "Manual",
-        status: "indexed",
-        updatedAt: "1w ago",
-      },
-    ]
+  // We use the "Adjusting state during render" pattern to avoid cascading renders
+  // Recommended at: https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const [prevDocuments, setPrevDocuments] = useState<Document[]>(documents);
+  const [documentsList, setDocumentsList] = useState<Document[]>(
+    documents && documents.length > 0 ? documents : MOCK_DOCUMENTS
   );
+
+  if (documents !== prevDocuments) {
+    setPrevDocuments(documents);
+    setDocumentsList(documents && documents.length > 0 ? documents : MOCK_DOCUMENTS);
+  }
+  const router = useRouter();
 
   const totalPages = Math.ceil(documentsList.length / itemsPerPage);
   const currentDocuments = documentsList.slice(
@@ -187,25 +167,14 @@ Our research shows that users are primarily looking for faster navigation and im
       setIsModalOpen(true);
     } else if (action === "delete") {
       try {
-        const response: Response = await clientFetch(
-          `/workspaces/${workspaceSlug}/documents/${doc.id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              "X-Organisation": orgSlug,
-            },
-          }
-        );
-        
-        if (response.status === 204) {
-          console.log("Document deleted successfully.");
-          return;
-        }
+        const response = await deleteDocumentAction(workspaceSlug, doc.id);
 
-        if (!response.ok) {
-          console.error("Failed to delete document. Please try again.");
-          return;
+        if (response.success) {
+          console.log(response.message);
+          setDocumentsList((prev) => prev.filter((d) => d.id !== doc.id));
+          router.refresh();
+        } else {
+          console.error(response.message);
         }
       } catch (err) {
         console.error(err);

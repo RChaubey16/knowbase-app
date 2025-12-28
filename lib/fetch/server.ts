@@ -47,13 +47,17 @@ export async function serverFetch<T>(
       }),
       ...(headers || {}),
     },
-    cache: rest.cache ?? "no-store",
+    cache: rest.next?.tags ? "force-cache" : rest.cache ?? "no-store",
   });
 
   if (res.status === 401) {
     redirect("/login");
   }
 
+  // 🔑 handle 204
+  if (res.status === 204) {
+    return null as T;
+  }
 
   const data = await res.json();
 
