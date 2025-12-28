@@ -5,9 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { clientFetch } from "@/lib/fetch/client";
-import { WorkspaceFields } from "@/types/workspace";
 import { useRouter } from "next/navigation";
+import { useWorkspaces } from "@/lib/hooks/use-workspaces";
 
 export default function CreateWorkspaceForm({
   organisationId,
@@ -32,7 +31,7 @@ export default function CreateWorkspaceForm({
     setError(null);
   };
 
-  console.log(`ORG SLUF`, organisationSlug);
+  const { createWorkspace } = useWorkspaces(organisationId);
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
@@ -45,17 +44,12 @@ export default function CreateWorkspaceForm({
     setError(null);
 
     try {
-      const response: WorkspaceFields = await clientFetch("/workspaces", {
-        method: "POST",
-        headers: {
-          "X-Organisation": organisationId ?? "",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-        }),
-      });
+      const response = await createWorkspace(formData.name);
 
-      console.log(`RESP`, response);
+      if (!response) {
+        throw new Error("Failed to get response from server");
+      }
+      
       setSubmitSuccess(true);
       router.push(
         `/organisation/${organisationSlug}/workspaces/${response.slug}/documents`
@@ -63,9 +57,9 @@ export default function CreateWorkspaceForm({
       if (onSuccess) {
         setTimeout(onSuccess, 500);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      setError("Failed to create workspace. Please try again.");
+      setError(err instanceof Error ? err.message : "Failed to create workspace. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

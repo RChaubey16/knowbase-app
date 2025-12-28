@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Document } from "@/types/document";
-import { clientFetch } from "@/lib/fetch/client";
 import { WorkspaceFields } from "@/types/workspace";
-import { createDocumentAction } from "@/app/actions/documents";
-import { useRouter } from "next/navigation";
+import { useDocuments } from "@/lib/hooks/use-documents";
+import { toast } from "sonner";
 
 export default function AddDocumentForm({
   workspace,
@@ -28,7 +26,6 @@ export default function AddDocumentForm({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -39,6 +36,8 @@ export default function AddDocumentForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError(null);
   };
+
+  const { addDocument } = useDocuments(workspace?.slug || "", workspace?.organisationId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,29 +53,19 @@ export default function AddDocumentForm({
     setIsSubmitting(true);
     setError(null);
 
-    if (!workspace?.slug || !workspace.organisationId) {
+    if (!workspace?.slug) {
       setError("Workspace is not properly configured.");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const response = await createDocumentAction({
-        workspaceSlug: workspace.slug,
-        payload: formData,
-      });
-
-      if (response.success) {
-        console.log(response.message);
-        router.refresh();
-      } else {
-        console.error(response.message);
-      }
-
+      await addDocument(formData);
+      toast.success("Document added successfully");
       onSuccess?.();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      setError("Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

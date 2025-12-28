@@ -93,7 +93,6 @@ function TopBarContent({
                 {indexStatus}
               </Badge>
             </div>
-            +{" "}
             <Button className="button" onClick={() => open(selectedWorkspace)}>
               <Plus className="h-4 w-4 stroke-3" />
               Add Document

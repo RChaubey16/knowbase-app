@@ -19,10 +19,10 @@ export async function deleteDocumentAction(
       success: true,
       message: "Document deleted successfully.",
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error.message ?? "Failed to delete document.",
+      message: error instanceof Error ? error.message : "Failed to delete document.",
     };
   }
 }
@@ -48,17 +48,16 @@ export async function createDocumentAction({
       }
     );
 
-    console.log(`res`, res)
     revalidateTag("documents", "max");
 
     return {
       success: true,
       message: "Document created successfully.",
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     return {
       success: false,
-      message: error.message ?? "Failed to create document.",
+      message: error instanceof Error ? error.message : "Failed to create document.",
     };
   }
 }

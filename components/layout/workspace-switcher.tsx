@@ -17,23 +17,10 @@ import { WorkspaceFields } from "@/types/workspace";
 import { useRouter } from "next/navigation";
 import { useCreateWorkspaceModal } from "../modals/create-workspace-modal";
 
-const workspaces = [
-  {
-    id: "1",
-    name: "Engineering Team",
-    initials: "ET",
-  },
-  {
-    id: "2",
-    name: "Marketing Team",
-    initials: "MT",
-  },
-  {
-    id: "3",
-    name: "Product Design",
-    initials: "PD",
-  },
-];
+
+
+import { useOrganisations } from "@/lib/hooks/use-organisations";
+import { useWorkspaces } from "@/lib/hooks/use-workspaces";
 
 export function WorkspaceSwitcher({
   swticherTitle,
@@ -50,9 +37,25 @@ export function WorkspaceSwitcher({
 }) {
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();
-  const [selectedWorkspace, setSelectedWorkspace] = React.useState(
-    selectedSpace ?? spaces[0]
+  
+  const { organisations } = useOrganisations(buttonText === "organisation" ? spaces as OrganisationFields[] : undefined);
+  const { workspaces } = useWorkspaces(
+    buttonText === "workspace" ? (selectedSpace as WorkspaceFields)?.organisationId : undefined,
+    buttonText === "workspace" ? spaces as WorkspaceFields[] : undefined
   );
+
+  const currentSpaces = (buttonText === "organisation" ? organisations : workspaces) || spaces;
+
+  const [selectedWorkspace, setSelectedWorkspace] = React.useState(
+    selectedSpace ?? currentSpaces[0]
+  );
+
+  // Sync state if selectedSpace changes (e.g. navigation)
+  React.useEffect(() => {
+    if (selectedSpace) {
+      setSelectedWorkspace(selectedSpace);
+    }
+  }, [selectedSpace]);
 
   return (
     <DropdownMenu>
@@ -77,7 +80,7 @@ export function WorkspaceSwitcher({
         <DropdownMenuLabel className="text-muted-foreground text-xs font-semibold uppercase tracking-wider px-2 py-1.5">
           {swticherTitle}
         </DropdownMenuLabel>
-        {spaces.map((workspace) => (
+        {currentSpaces.map((workspace) => (
           <DropdownMenuItem
             key={workspace.id}
             onSelect={() => {

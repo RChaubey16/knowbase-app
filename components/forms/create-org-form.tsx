@@ -5,12 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { clientFetch } from '@/lib/fetch/client';
 import { useRouter } from 'next/navigation';
-import { OrganisationFields } from '@/types/organisation';
+import { useOrganisations } from '@/lib/hooks/use-organisations';
 
 export default function CreateOrganisationForm() {
   const router = useRouter();
+  const { createOrganisation } = useOrganisations();
   const [formData, setFormData] = useState({
     name: '',
     slug: ''
@@ -43,13 +43,11 @@ export default function CreateOrganisationForm() {
     setError(null);
 
     try {
-      const response: OrganisationFields = await clientFetch("/organisations", {
-        method: "POST",
-        body: JSON.stringify({
-          name: formData.name,
-          slug: formData.slug,
-        }),
-      });
+      const response = await createOrganisation(formData.name, formData.slug);
+      
+      if (!response) {
+        throw new Error("Failed to get response from server");
+      }
 
       setSubmitSuccess(true);
       router.push(`/organisation/${response.slug}`);

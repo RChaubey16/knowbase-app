@@ -30,11 +30,9 @@ import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import { timeAgo } from "@/lib/utils";
-import { deleteDocumentAction } from "@/app/actions/documents";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { EmptyState } from "../ui/empty-state";
-import { useAddDocumentModal } from "../modals/add-document-modal";
+import { useDocuments } from "@/lib/hooks/use-documents";
 
 const DocumentsList = ({
   documents,
@@ -43,6 +41,7 @@ const DocumentsList = ({
   documents: Document[];
   workspaceSlug: string;
 }) => {
+  const { documents: documentsList, deleteDocument } = useDocuments(workspaceSlug, undefined, documents);
   const [viewMode, setViewMode] = useState<string>("table");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -50,20 +49,9 @@ const DocumentsList = ({
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const { open } = useAddDocumentModal();
 
-  // We use the "Adjusting state during render" pattern to avoid cascading renders
-  const [prevDocuments, setPrevDocuments] = useState<Document[]>(documents);
-  const [documentsList, setDocumentsList] = useState<Document[]>(documents);
-
-  if (documents !== prevDocuments) {
-    setPrevDocuments(documents);
-    setDocumentsList(documents);
-  }
-  const router = useRouter();
-
-  const totalPages = Math.ceil(documentsList.length / itemsPerPage);
-  const currentDocuments = documentsList.slice(
+  const totalPages = Math.ceil((documentsList?.length || 0) / itemsPerPage);
+  const currentDocuments = (documentsList || []).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -108,26 +96,10 @@ const DocumentsList = ({
       setSelectedDocument(doc);
       setIsModalOpen(true);
     } else if (action === "delete") {
-      // Optimistic Update
-      const previousList = [...documentsList];
-      setDocumentsList((prev) => prev.filter((d) => d.id !== doc.id));
-      
-      const deletePromise = deleteDocumentAction(workspaceSlug, doc.id);
-      
-      toast.promise(deletePromise, {
+      toast.promise(deleteDocument(doc.id), {
         loading: 'Deleting document...',
-        success: (response) => {
-          if (response.success) {
-            router.refresh();
-            return `Successfully deleted "${doc.title}"`;
-          }
-          throw new Error(response.message);
-        },
-        error: (err) => {
-          // Revert on error
-          setDocumentsList(previousList);
-          return `Failed to delete: ${err.message || 'Unknown error'}`;
-        },
+        success: `Successfully deleted "${doc.title}"`,
+        error: (err) => `Failed to delete: ${err.message || 'Unknown error'}`,
       });
     }
   };
@@ -141,7 +113,7 @@ const DocumentsList = ({
     return `${base} hover:bg-muted/50`;
   };
 
-  if (documentsList.length === 0) {
+  if (!documentsList || documentsList.length === 0) {
     return (
       <div className="w-full p-6">
          <EmptyState 
