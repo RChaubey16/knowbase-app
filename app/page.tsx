@@ -5,7 +5,6 @@ import Link from "next/link";
 
 export default async function Home() {
   const data = await serverFetch("/auth/me");
-  console.log(`DATA`, data);
 
   let jsx = (
     <>

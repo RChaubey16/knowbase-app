@@ -1,19 +1,16 @@
 "use server";
 
 import { serverFetch } from "@/lib/fetch/server";
-import { revalidateTag } from "next/cache";
+import { Document } from "@/types/document";
 
 export async function deleteDocumentAction(
   workspaceSlug: string,
   docId: string | number
 ) {
   try {
-    await serverFetch(
-      `/workspaces/${workspaceSlug}/documents/${docId}`,
-      { method: "DELETE" }
-    );
-
-    revalidateTag("documents", "max");
+    await serverFetch(`/workspaces/${workspaceSlug}/documents/${docId}`, {
+      method: "DELETE",
+    });
 
     return {
       success: true,
@@ -22,7 +19,8 @@ export async function deleteDocumentAction(
   } catch (error: unknown) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Failed to delete document.",
+      message:
+        error instanceof Error ? error.message : "Failed to delete document.",
     };
   }
 }
@@ -37,7 +35,7 @@ export async function createDocumentAction({
   payload,
 }: CreateDocumentInput) {
   try {
-    const res = await serverFetch(
+    const createdDoc = await serverFetch<Document>(
       `/workspaces/${workspaceSlug}/documents`,
       {
         method: "POST",
@@ -48,16 +46,16 @@ export async function createDocumentAction({
       }
     );
 
-    revalidateTag("documents", "max");
-
     return {
       success: true,
       message: "Document created successfully.",
+      document: createdDoc,
     };
   } catch (error: unknown) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Failed to create document.",
+      message:
+        error instanceof Error ? error.message : "Failed to create document.",
     };
   }
 }

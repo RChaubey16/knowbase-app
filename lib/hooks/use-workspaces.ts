@@ -2,12 +2,12 @@ import useSWR from "swr";
 import { clientFetch } from "@/lib/fetch/client";
 import { WorkspaceFields } from "@/types/workspace";
 
-export function useWorkspaces(organisationId?: string, fallbackData?: WorkspaceFields[]) {
+export function useWorkspaces(organisationSlug?: string, fallbackData?: WorkspaceFields[]) {
   const { data, error, isLoading, mutate } = useSWR<WorkspaceFields[]>(
-    organisationId ? `/workspaces` : null,
+    organisationSlug ? `/workspaces` : null,
     (url) => clientFetch<WorkspaceFields[]>(url, {
       headers: {
-        "X-Organisation": organisationId || "",
+        "X-Organisation": organisationSlug || "",
       },
     }),
     {
@@ -16,7 +16,7 @@ export function useWorkspaces(organisationId?: string, fallbackData?: WorkspaceF
   );
 
   const createWorkspace = async (name: string) => {
-    if (!organisationId) throw new Error("Organisation ID is required");
+    if (!organisationSlug) throw new Error("Organisation slug is required");
     
     const newWorkspace = { name, id: Date.now().toString(), slug: name.toLowerCase().replace(/ /g, '-') };
     
@@ -27,7 +27,7 @@ export function useWorkspaces(organisationId?: string, fallbackData?: WorkspaceF
         created = await clientFetch<WorkspaceFields>("/workspaces", {
           method: "POST",
           headers: {
-            "X-Organisation": organisationId,
+            "X-Organisation": organisationSlug,
           },
           body: JSON.stringify({ name }),
         });

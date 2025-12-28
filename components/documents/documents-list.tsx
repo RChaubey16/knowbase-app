@@ -37,11 +37,13 @@ import { useDocuments } from "@/lib/hooks/use-documents";
 const DocumentsList = ({
   documents,
   workspaceSlug,
+  organisationSlug
 }: {
   documents: Document[];
   workspaceSlug: string;
+  organisationSlug?: string;
 }) => {
-  const { documents: documentsList, deleteDocument } = useDocuments(workspaceSlug, undefined, documents);
+  const { documents: documentsList, deleteDocument } = useDocuments(workspaceSlug, organisationSlug, documents);
   const [viewMode, setViewMode] = useState<string>("table");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;

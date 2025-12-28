@@ -17,8 +17,6 @@ import { WorkspaceFields } from "@/types/workspace";
 import { useRouter } from "next/navigation";
 import { useCreateWorkspaceModal } from "../modals/create-workspace-modal";
 
-
-
 import { useOrganisations } from "@/lib/hooks/use-organisations";
 import { useWorkspaces } from "@/lib/hooks/use-workspaces";
 
@@ -107,8 +105,7 @@ export function WorkspaceSwitcher({
           className="flex items-center gap-2 px-2 py-2"
           onClick={() => {
             if (buttonText === "workspace") {
-              const workspace = selectedWorkspace as WorkspaceFields;
-              open(workspace.organisationId, orgSlug);
+              open(orgSlug);
             } else {
               router.push(`/organisation/create`);
             }

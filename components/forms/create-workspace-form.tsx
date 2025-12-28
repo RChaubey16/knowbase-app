@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { useWorkspaces } from "@/lib/hooks/use-workspaces";
 
 export default function CreateWorkspaceForm({
-  organisationId,
   organisationSlug,
   onSuccess,
 }: {
@@ -31,7 +30,7 @@ export default function CreateWorkspaceForm({
     setError(null);
   };
 
-  const { createWorkspace } = useWorkspaces(organisationId);
+  const { createWorkspace } = useWorkspaces(organisationSlug);
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {

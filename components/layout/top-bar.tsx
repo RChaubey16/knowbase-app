@@ -11,11 +11,9 @@ import {
   AddDocumentModalProvider,
   useAddDocumentModal,
 } from "../modals/add-document-modal";
-import Link from "next/link";
 import { WorkspaceFields } from "@/types/workspace";
 
 interface TopBarProps {
-  title: string;
   indexStatus: "ready" | "updating";
   type: "search" | "documents";
   noWorkspaces?: boolean;
@@ -33,7 +31,6 @@ export function TopBar(props: TopBarProps) {
 }
 
 function TopBarContent({
-  title,
   indexStatus,
   type,
   noWorkspaces,
@@ -64,18 +61,9 @@ function TopBarContent({
           </>
         )}
         <Separator orientation="vertical" className="h-6" />
-        {/* <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          {title}
-        </h1> */}
       </div>
 
       <div className="flex items-center gap-3">
-        {/* {type === "search" && (
-          <Link href="/documents" className="hover:underline">
-            Documents
-          </Link>
-        )} */}
-
         {type === "documents" && (
           <>
             <div className="flex items-center gap-2 px-3 py-1 bg-muted/30 rounded-full border border-border/50">
@@ -99,7 +87,6 @@ function TopBarContent({
             </Button>
           </>
         )}
-
         <ThemeToggle />
       </div>
     </div>

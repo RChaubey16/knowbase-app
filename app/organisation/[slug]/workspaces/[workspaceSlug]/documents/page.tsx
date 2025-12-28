@@ -7,7 +7,7 @@ interface PageProps {
 }
 
 export default async function WorkspaceDocumentsPage({ params }: PageProps) {
-  const { workspaceSlug } = await params;
+  const { workspaceSlug, slug } = await params;
 
   const documents = await serverFetch<Document[]>(
     `/workspaces/${workspaceSlug}/documents`
@@ -16,7 +16,7 @@ export default async function WorkspaceDocumentsPage({ params }: PageProps) {
   return (
     <div className="space-y-6">
       <main className="flex-1">
-        <DocumentsList documents={documents} workspaceSlug={workspaceSlug} />
+        <DocumentsList documents={documents} workspaceSlug={workspaceSlug} organisationSlug={slug} />
       </main>
     </div>
   );
