@@ -10,6 +10,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Document } from "@/types/document";
 import { clientFetch } from "@/lib/fetch/client";
 import { WorkspaceFields } from "@/types/workspace";
+import { createDocumentAction } from "@/app/actions/documents";
+import { useRouter } from "next/navigation";
 
 export default function AddDocumentForm({
   workspace,
@@ -26,6 +28,7 @@ export default function AddDocumentForm({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -58,17 +61,17 @@ export default function AddDocumentForm({
     }
 
     try {
-      const response: Response = await clientFetch(
-        `/workspaces/${workspace.slug}/documents`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Organisation": workspace.organisationId,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await createDocumentAction({
+        workspaceSlug: workspace.slug,
+        payload: formData,
+      });
+
+      if (response.success) {
+        console.log(response.message);
+        router.refresh();
+      } else {
+        console.error(response.message);
+      }
 
       onSuccess?.();
     } catch (err) {

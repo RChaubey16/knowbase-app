@@ -26,3 +26,39 @@ export async function deleteDocumentAction(
     };
   }
 }
+
+type CreateDocumentInput = {
+  workspaceSlug: string;
+  payload: Record<string, string | number | boolean>; // shape of your form data
+};
+
+export async function createDocumentAction({
+  workspaceSlug,
+  payload,
+}: CreateDocumentInput) {
+  try {
+    const res = await serverFetch(
+      `/workspaces/${workspaceSlug}/documents`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    console.log(`res`, res)
+    revalidateTag("documents", "max");
+
+    return {
+      success: true,
+      message: "Document created successfully.",
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message ?? "Failed to create document.",
+    };
+  }
+}
