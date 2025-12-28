@@ -4,9 +4,9 @@ import { OrganisationFields } from "@/types/organisation";
 import Link from "next/link";
 
 export default async function Home() {
-  const data = await serverFetch("/auth/me");
+  const data: { userId: string } = await serverFetch("/auth/me");
 
-  let jsx = (
+  let jsx: React.ReactNode = (
     <>
       <li>
         <Link href="/login">Login</Link>
