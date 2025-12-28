@@ -32,64 +32,9 @@ import { Document, DocumentStatus, ActionType } from "@/types/document";
 import { timeAgo } from "@/lib/utils";
 import { deleteDocumentAction } from "@/app/actions/documents";
 import { useRouter } from "next/navigation";
-
-const MOCK_DOCUMENTS: Document[] = [
-  {
-    id: 1,
-    title: "Product Requirements Document",
-    snippet: "This document outlines the core features and specifications for the Q4 release...",
-    content: "Draft content... ",
-    source: "Manual",
-    type: "text",
-    status: "ready",
-    updatedAt: "2h ago",
-    createdAt: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: 2,
-    title: "API Documentation",
-    snippet: "Complete REST API reference with authentication, endpoints, and response formats...",
-    content: "## API Documentation...",
-    source: "URL",
-    type: "url",
-    status: "ready",
-    updatedAt: "5h ago",
-    createdAt: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: 3,
-    title: "Marketing Strategy 2024",
-    snippet: "Comprehensive marketing plan covering digital channels, budget allocation...",
-    content: "Marketing plan...",
-    source: "Manual",
-    type: "text",
-    status: "processing",
-    updatedAt: "1d ago",
-    createdAt: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: 4,
-    title: "Technical Architecture Overview",
-    snippet: "System design and infrastructure details for the microservices platform...",
-    content: "Architecture details...",
-    source: "URL",
-    type: "url",
-    status: "failed",
-    updatedAt: "3d ago",
-    createdAt: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: 5,
-    title: "User Research Findings",
-    snippet: "Analysis of user interviews and survey data from 150+ participants...",
-    content: "# User Research Findings...",
-    source: "Manual",
-    type: "text",
-    status: "ready",
-    updatedAt: "1w ago",
-    createdAt: "2024-01-01T00:00:00Z",
-  },
-];
+import { toast } from "sonner";
+import { EmptyState } from "../ui/empty-state";
+import { useAddDocumentModal } from "../modals/add-document-modal";
 
 const DocumentsList = ({
   documents,
@@ -105,17 +50,15 @@ const DocumentsList = ({
     null
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // const { open } = useAddDocumentModal();
 
   // We use the "Adjusting state during render" pattern to avoid cascading renders
-  // Recommended at: https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   const [prevDocuments, setPrevDocuments] = useState<Document[]>(documents);
-  const [documentsList, setDocumentsList] = useState<Document[]>(
-    documents && documents.length > 0 ? documents : MOCK_DOCUMENTS
-  );
+  const [documentsList, setDocumentsList] = useState<Document[]>(documents);
 
   if (documents !== prevDocuments) {
     setPrevDocuments(documents);
-    setDocumentsList(documents && documents.length > 0 ? documents : MOCK_DOCUMENTS);
+    setDocumentsList(documents);
   }
   const router = useRouter();
 
@@ -161,24 +104,31 @@ const DocumentsList = ({
   };
 
   const handleAction = async (action: ActionType, doc: Document) => {
-    console.log(`${action} document:`, doc);
     if (action === "view") {
       setSelectedDocument(doc);
       setIsModalOpen(true);
     } else if (action === "delete") {
-      try {
-        const response = await deleteDocumentAction(workspaceSlug, doc.id);
-
-        if (response.success) {
-          console.log(response.message);
-          setDocumentsList((prev) => prev.filter((d) => d.id !== doc.id));
-          router.refresh();
-        } else {
-          console.error(response.message);
-        }
-      } catch (err) {
-        console.error(err);
-      }
+      // Optimistic Update
+      const previousList = [...documentsList];
+      setDocumentsList((prev) => prev.filter((d) => d.id !== doc.id));
+      
+      const deletePromise = deleteDocumentAction(workspaceSlug, doc.id);
+      
+      toast.promise(deletePromise, {
+        loading: 'Deleting document...',
+        success: (response) => {
+          if (response.success) {
+            router.refresh();
+            return `Successfully deleted "${doc.title}"`;
+          }
+          throw new Error(response.message);
+        },
+        error: (err) => {
+          // Revert on error
+          setDocumentsList(previousList);
+          return `Failed to delete: ${err.message || 'Unknown error'}`;
+        },
+      });
     }
   };
 
@@ -190,6 +140,19 @@ const DocumentsList = ({
       return `${base} bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/20 dark:hover:bg-blue-950/30`;
     return `${base} hover:bg-muted/50`;
   };
+
+  if (documentsList.length === 0) {
+    return (
+      <div className="w-full p-6">
+         <EmptyState 
+            title="No documents yet" 
+            description="Start building your knowledge base by adding your first document. You can add text, PDFs, or web links."
+            actionLabel="Add Document"
+            // onAction={() => open && open()}
+         />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full p-6 bg-background">
@@ -243,57 +206,59 @@ const DocumentsList = ({
         )}
       </div>
 
-      <div className="mt-8">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage((p) => Math.max(1, p - 1));
-                }}
-              />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                isActive={currentPage === 1}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage(1);
-                }}
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                isActive={currentPage === 2}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (totalPages >= 2) setCurrentPage(2);
-                }}
-              >
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage((p) => p + 1);
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+      {totalPages > 1 && (
+        <div className="mt-8">
+            <Pagination>
+            <PaginationContent>
+                <PaginationItem>
+                <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentPage((p) => Math.max(1, p - 1));
+                    }}
+                />
+                </PaginationItem>
+                <PaginationItem>
+                <PaginationLink
+                    href="#"
+                    isActive={currentPage === 1}
+                    onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentPage(1);
+                    }}
+                >
+                    1
+                </PaginationLink>
+                </PaginationItem>
+                {totalPages >= 2 && (
+                    <PaginationItem>
+                    <PaginationLink
+                        href="#"
+                        isActive={currentPage === 2}
+                        onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(2);
+                        }}
+                    >
+                        2
+                    </PaginationLink>
+                    </PaginationItem>
+                )}
+                {totalPages > 2 && <PaginationItem><PaginationEllipsis /></PaginationItem>}
+                <PaginationItem>
+                <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
+                    }}
+                />
+                </PaginationItem>
+            </PaginationContent>
+            </Pagination>
+        </div>
+      )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

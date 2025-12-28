@@ -3,6 +3,7 @@
 import { SearchResult } from "@/types/search-result";
 import { SearchResultCard } from "./search-result-card";
 import { Search, FileQuestion } from "lucide-react";
+import { SearchResultSkeleton } from "../ui/skeleton";
 
 interface SearchResultsProps {
   results: SearchResult[];
@@ -34,12 +35,9 @@ export function SearchResults({
   // Loading state
   if (isLoading) {
     return (
-      <div className="space-y-4 animate-pulse">
+      <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="h-32 bg-muted/30 rounded-lg border-2 border-border/50"
-          />
+          <SearchResultSkeleton key={i} />
         ))}
       </div>
     );

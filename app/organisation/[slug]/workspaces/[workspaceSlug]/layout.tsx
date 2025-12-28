@@ -1,4 +1,5 @@
 import { TopBar } from "@/components/layout/top-bar";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
 import { WorkspaceFields } from "@/types/workspace";
@@ -39,7 +40,10 @@ export default async function WorkspaceLayout({
         orgSlug={slug}
         workspaceSlug={workspaceSlug}
       />
-      <div className="flex flex-1 flex-col">{children}</div>
+      <div className="flex flex-1 flex-col px-6 py-4">
+        <Breadcrumbs />
+        {children}
+      </div>
     </>
   );
 }
