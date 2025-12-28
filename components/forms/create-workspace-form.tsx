@@ -48,7 +48,7 @@ export default function CreateWorkspaceForm({
       const response: WorkspaceFields = await clientFetch("/workspaces", {
         method: "POST",
         headers: {
-          "X-Organisation-Id": organisationId ?? "",
+          "X-Organisation": organisationId ?? "",
         },
         body: JSON.stringify({
           name: formData.name,

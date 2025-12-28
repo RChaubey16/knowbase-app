@@ -3,11 +3,11 @@ import { serverFetch } from "@/lib/fetch/server";
 import { Document } from "@/types/document";
 
 interface PageProps {
-  params: Promise<{ slug?: string; workspaceSlug: string }>;
+  params: Promise<{ slug: string; workspaceSlug: string }>;
 }
 
 export default async function WorkspacePage({ params }: PageProps) {
-  const { workspaceSlug } = await params;
+  const { workspaceSlug, slug } = await params;
 
   const documents = await serverFetch<Document[]>(
     `/workspaces/${workspaceSlug}/documents`
@@ -16,7 +16,7 @@ export default async function WorkspacePage({ params }: PageProps) {
   return (
     <div className="space-y-6">
       <main className="flex-1">
-        <DocumentsList documents={documents} workspaceSlug={workspaceSlug} />
+        <DocumentsList documents={documents} workspaceSlug={workspaceSlug} orgSlug={slug} />
       </main>
     </div>
   );

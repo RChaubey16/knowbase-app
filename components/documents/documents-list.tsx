@@ -35,8 +35,10 @@ import { clientFetch } from "@/lib/fetch/client";
 const DocumentsList = ({
   documents,
   workspaceSlug,
+  orgSlug,
 }: {
   documents: Document[];
+  orgSlug: string;
   workspaceSlug: string;
 }) => {
   const [viewMode, setViewMode] = useState<string>("table");
@@ -191,12 +193,15 @@ Our research shows that users are primarily looking for faster navigation and im
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
-              "X-Organisation-Id": "12266b48-413d-4a31-86b3-4e9f70bda195",
+              "X-Organisation": orgSlug,
             },
           }
         );
         
-        console.log(`RESP`, response)
+        if (response.status === 204) {
+          console.log("Document deleted successfully.");
+          return;
+        }
 
         if (!response.ok) {
           console.error("Failed to delete document. Please try again.");

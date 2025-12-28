@@ -64,7 +64,7 @@ export default function AddDocumentForm({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "X-Organisation-Id": workspace.organisationId,
+            "X-Organisation": workspace.organisationId,
           },
           body: JSON.stringify(formData),
         }

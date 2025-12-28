@@ -23,7 +23,7 @@ export default async function WorkspaceLayout({
 
   const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
     headers: {
-      "X-Organisation-Id": currOrganisation.id,
+      "X-Organisation": currOrganisation.id,
     },
   });
   const noWorkspaces = workspaces.length === 0;

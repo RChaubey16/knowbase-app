@@ -21,7 +21,7 @@ export async function serverFetch<T>(
   const cookieStore = await cookies();
 
 
-  const organisationId = cookieStore.get("X-Organisation-Id")?.value;
+  const organisationId = cookieStore.get("X-Organisation")?.value;
 
 
   const url = new URL(endpoint, API_BASE_URL);
@@ -36,14 +36,14 @@ export async function serverFetch<T>(
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
-  console.log("ORG ID HEADER", organisationId)
+  console.log("ORG HEADER", organisationId)
 
   const res = await fetch(url.toString(), {
     ...rest,
     headers: {
       Cookie: cookieHeader,
       ...(organisationId && {
-        "X-Organisation-Id": organisationId,
+        "X-Organisation": organisationId,
       }),
       ...(headers || {}),
     },
