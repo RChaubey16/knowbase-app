@@ -32,7 +32,6 @@ export default async function WorkspaceLayout({
   return (
     <>
       <TopBar
-        title="Documents"
         indexStatus="ready"
         type="documents"
         noWorkspaces={noWorkspaces}

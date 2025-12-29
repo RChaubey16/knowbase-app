@@ -8,21 +8,7 @@ export function GoogleLoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     try {
-  //       const res = await clientFetcher("/auth/me");
-  //       console.log("ME:", res);
-  //     } catch (err) {
-  //       console.log("Not logged in");
-  //     }
-  //   };
-
-  //   checkAuth();
-  // }, []);
-
   const loginWithGoogle = async () => {
-    console.log("Login with Google", process.env.NEXT_PUBLIC_API_BASE_URL);
     window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`;
   };
 

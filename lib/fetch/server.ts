@@ -20,9 +20,7 @@ export async function serverFetch<T>(
   const { params, headers, ...rest } = options;
   const cookieStore = await cookies();
 
-
   const organisationId = cookieStore.get("X-Organisation")?.value;
-
 
   const url = new URL(endpoint, API_BASE_URL);
   if (params) {
@@ -62,7 +60,6 @@ export async function serverFetch<T>(
   const data = await res.json();
 
   if (!res.ok) {
-    // 🔑 Wrap backend message in a real Error
     throw new Error(data.message ?? "Request failed");
   }
 

@@ -22,9 +22,9 @@ export function CreateWorkspaceModalProvider({
     { id?: string; slug?: string } | undefined
   >();
 
-  const handleOpen = (id?: string, slug?: string) => {
+  const handleOpen = (slug?: string) => {
+
     setOrganisation({
-      id,
       slug,
     });
     setOpen(true);
@@ -36,7 +36,6 @@ export function CreateWorkspaceModalProvider({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <CreateWorkspaceForm
-            organisationId={organisation?.id}
             organisationSlug={organisation?.slug}
             onSuccess={() => setOpen(false)}
           />
