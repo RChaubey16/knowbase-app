@@ -12,8 +12,30 @@ interface SearchResultCardProps {
   onClick?: (result: SearchResult) => void;
 }
 
-export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
+export function SearchResultCard({
+  result,
+  searchQuery,
+  onClick,
+}: SearchResultCardProps) {
   console.log(`result`, result);
+
+  const highlightText = (text: string, query?: string) => {
+    if (!query || !query.trim()) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark
+          key={index}
+          className="bg-primary/20 text-foreground font-semibold px-0.5 rounded"
+        >
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
 
   return (
     <Card
@@ -32,10 +54,9 @@ export function SearchResultCard({ result, onClick }: SearchResultCardProps) {
         </h3>
 
         {/* Snippet */}
-        <p
-          className="text-sm text-muted-foreground leading-relaxed line-clamp-3"
-          dangerouslySetInnerHTML={{ __html: result.snippet }}
-        />
+        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+          {highlightText(result.snippet, searchQuery)}
+        </p>
 
         {/* Metadata */}
         <div className="flex items-center gap-3 text-xs text-muted-foreground pt-2 border-t border-border/50">
