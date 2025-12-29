@@ -1,12 +1,12 @@
 export interface SearchResult {
   id: string;
   documentId: number;
-  documentTitle: string;
+  title: string;
   snippet: string;
-  sourceType: "url" | "manual";
+  type: "url" | "manual";
   sourceUrl?: string;
-  updatedAt: string;
-  relevanceScore?: number;
+  updated_at: string;
+  rank?: number;
 }
 
 export interface SearchState {
