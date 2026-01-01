@@ -22,6 +22,7 @@ interface InviteMembersResponse {
 
 export default function InviteMembersForm({
   organisationSlug,
+  workspaceSlug,
   onSuccess,
 }: {
   organisationSlug: string;
@@ -86,17 +87,32 @@ export default function InviteMembersForm({
 
     setIsSubmitting(true);
 
+    let URL = ""
+    if (workspaceSlug) {
+      URL = `/workspaces/members`
+    } else {
+      URL = `/organisations/members`
+    }
+
+    const payload: {
+      organisationSlug: string;
+      emails: string[];
+      role: string;
+      workspaceSlug?: string;
+    } = {
+      organisationSlug,
+      emails: finalEmails,
+      role,
+      ...(workspaceSlug && { workspaceSlug }),
+    };
+
     try {
-      const res = await clientFetch<InviteMembersResponse>("/organisations/members", {
+      const res = await clientFetch<InviteMembersResponse>(URL, {
         method: "POST",
         headers: {
           'X-Organisation': organisationSlug
         },
-        body: JSON.stringify({
-          organisationSlug,
-          emails: finalEmails,
-          // role,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (res.added <= 0 && res.skipped.length > 0) {
@@ -119,7 +135,7 @@ export default function InviteMembersForm({
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold tracking-tight">Invite Members</h2>
         <p className="text-muted-foreground">
-          Invite people to collaborate on this workspace
+          Invite people to collaborate on this {workspaceSlug ? "Workspace" : "Organisation"}
         </p>
       </div>
 

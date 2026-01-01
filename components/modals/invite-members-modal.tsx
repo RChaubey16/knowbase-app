@@ -18,7 +18,7 @@ export function InviteMembersModalProvider({
   const [isOpen, setIsOpen] = useState(false);
   const [slugs, setSlugs] = useState<{ org: string; ws: string } | null>(null);
 
-  const handleOpen = (organisationSlug: string, workspaceSlug: string) => {
+  const handleOpen = (organisationSlug: string, workspaceSlug: string = "") => {
     setSlugs({ org: organisationSlug, ws: workspaceSlug });
     setIsOpen(true);
   };
