@@ -92,7 +92,8 @@ function TopBarContent({
             <Button
               variant="outline"
               className="button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
-              onClick={() => openInvite()}
+              disabled={!workspaceSlug}
+              onClick={() => openInvite(orgSlug, workspaceSlug!)}
             >
               <UserPlus className="h-4 w-4 stroke-2" />
               Invite members

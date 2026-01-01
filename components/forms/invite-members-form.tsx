@@ -13,10 +13,19 @@ import {
 import { X, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { clientFetch } from "@/lib/fetch/client";
+
+interface InviteMembersResponse {
+  added: number;
+  skipped: string[];
+}
 
 export default function InviteMembersForm({
+  organisationSlug,
   onSuccess,
 }: {
+  organisationSlug: string;
+  workspaceSlug?: string;
   onSuccess?: () => void;
 }) {
   const [emails, setEmails] = useState<string[]>([]);
@@ -76,14 +85,33 @@ export default function InviteMembersForm({
     }
 
     setIsSubmitting(true);
-    console.log("Inviting members:", { emails: finalEmails, role });
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    toast.success(`Sent ${finalEmails.length} invitation(s) as ${role}`);
-    setIsSubmitting(false);
-    onSuccess?.();
+
+    try {
+      const res = await clientFetch<InviteMembersResponse>("/organisations/members", {
+        method: "POST",
+        headers: {
+          'X-Organisation': organisationSlug
+        },
+        body: JSON.stringify({
+          organisationSlug,
+          emails: finalEmails,
+          // role,
+        }),
+      });
+
+      if (res.added <= 0 && res.skipped.length > 0) {
+        toast.error(`Failed to invite ${res.skipped.join(", ")} email(s) as they do not exist`);
+      } else if (res.added > 0) {
+        toast.success(`Sent ${finalEmails.length} invitation(s) as ${role}`);
+      }
+
+      onSuccess?.();
+    } catch (err: unknown) {
+      console.error("Invite error:", err);
+      toast.error(err instanceof Error ? err.message : "Failed to send invitations");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,7 +128,7 @@ export default function InviteMembersForm({
           <Label htmlFor="emails">Email addresses</Label>
           <div 
             className={cn(
-              "flex flex-wrap items-center gap-2 p-2 min-h-[44px] rounded-md border border-input bg-transparent focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+              "flex flex-wrap items-center gap-2 p-2 min-h-11 rounded-md border border-input bg-transparent focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
               "dark:bg-input/30"
             )}
           >
@@ -122,7 +150,7 @@ export default function InviteMembersForm({
             <input
               id="emails"
               type="text"
-              className="flex-1 bg-transparent outline-none min-w-[120px] text-sm"
+              className="flex-1 bg-transparent outline-none min-w-30 text-sm"
               placeholder={emails.length === 0 ? "Enter emails separated by comma or enter..." : ""}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
