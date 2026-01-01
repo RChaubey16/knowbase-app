@@ -25,6 +25,7 @@ interface TopBarProps {
   workspaces: WorkspaceFields[];
   orgSlug: string;
   workspaceSlug?: string;
+  wsUserRole: string;
 }
 
 export function TopBar(props: TopBarProps) {
@@ -44,6 +45,7 @@ function TopBarContent({
   workspaces,
   orgSlug,
   workspaceSlug,
+  wsUserRole,
 }: TopBarProps) {
   const { open: openAddDoc } = useAddDocumentModal();
   const { open: openInvite } = useInviteMembersModal();
@@ -89,25 +91,23 @@ function TopBarContent({
                 {indexStatus}
               </Badge>
             </div>
+
+            {wsUserRole === "owner" && (
+              <Button
+                variant="outline"
+                className="button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
+                disabled={!workspaceSlug}
+                onClick={() => openInvite(orgSlug, workspaceSlug!)}
+              >
+                <UserPlus className="h-4 w-4 stroke-2" />
+                Invite members to Workspace
+              </Button>
+            )}
+            
             <Button
-              variant="outline"
-              className="button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
-              disabled={!orgSlug}
-              onClick={() => openInvite(orgSlug, "")}
+              className="button"
+              onClick={() => openAddDoc(selectedWorkspace)}
             >
-              <UserPlus className="h-4 w-4 stroke-2" />
-              Invite members to Org
-            </Button>
-            <Button
-              variant="outline"
-              className="button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
-              disabled={!workspaceSlug}
-              onClick={() => openInvite(orgSlug, workspaceSlug!)}
-            >
-              <UserPlus className="h-4 w-4 stroke-2" />
-              Invite members to Workspace
-            </Button>
-            <Button className="button" onClick={() => openAddDoc(selectedWorkspace)}>
               <Plus className="h-4 w-4 stroke-3" />
               Add Document
             </Button>

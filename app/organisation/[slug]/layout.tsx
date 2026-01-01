@@ -24,12 +24,17 @@ export default async function OrganisationLayout({
     notFound();
   }
 
+  const orgUser = await serverFetch<{ organisation_members: { role: string } }>(
+    `/organisations/${slug}/me`
+  );
+
   return (
     <div className="flex min-h-screen">
-      <SetOrganisation orgId={currOrganisation.id} />
+      <SetOrganisation orgId={slug} />
       <Sidebar
         organisations={organisations}
         currOrganisation={currOrganisation}
+        orgUser={orgUser.organisation_members}
       />
       <div className="flex flex-1 flex-col">{children}</div>
     </div>

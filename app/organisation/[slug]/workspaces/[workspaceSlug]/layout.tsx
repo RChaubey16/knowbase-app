@@ -24,10 +24,14 @@ export default async function WorkspaceLayout({
 
   const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
     headers: {
-      "X-Organisation": currOrganisation.id,
+      "X-Organisation": slug,
     },
   });
   const noWorkspaces = workspaces.length === 0;
+
+  const wsUser = await serverFetch<{ workspace_members: { role: string } }>(
+    `/workspaces/${workspaceSlug}/me`
+  );
 
   return (
     <>
@@ -38,6 +42,8 @@ export default async function WorkspaceLayout({
         workspaces={workspaces}
         orgSlug={slug}
         workspaceSlug={workspaceSlug}
+        wsUserRole={wsUser.workspace_members.role}
+
       />
       <div className="flex flex-1 flex-col px-6 py-4">
         <Breadcrumbs />
