@@ -11,7 +11,12 @@ import {
   AddDocumentModalProvider,
   useAddDocumentModal,
 } from "../modals/add-document-modal";
+import {
+  InviteMembersModalProvider,
+  useInviteMembersModal,
+} from "../modals/invite-members-modal";
 import { WorkspaceFields } from "@/types/workspace";
+import { UserPlus } from "lucide-react";
 
 interface TopBarProps {
   indexStatus: "ready" | "updating";
@@ -25,7 +30,9 @@ interface TopBarProps {
 export function TopBar(props: TopBarProps) {
   return (
     <AddDocumentModalProvider>
-      <TopBarContent {...props} />
+      <InviteMembersModalProvider>
+        <TopBarContent {...props} />
+      </InviteMembersModalProvider>
     </AddDocumentModalProvider>
   );
 }
@@ -38,7 +45,8 @@ function TopBarContent({
   orgSlug,
   workspaceSlug,
 }: TopBarProps) {
-  const { open } = useAddDocumentModal();
+  const { open: openAddDoc } = useAddDocumentModal();
+  const { open: openInvite } = useInviteMembersModal();
   const selectedWorkspace = workspaces.find(
     (workspace) => workspace.slug === workspaceSlug
   );
@@ -81,7 +89,15 @@ function TopBarContent({
                 {indexStatus}
               </Badge>
             </div>
-            <Button className="button" onClick={() => open(selectedWorkspace)}>
+            <Button
+              variant="outline"
+              className="button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
+              onClick={() => openInvite()}
+            >
+              <UserPlus className="h-4 w-4 stroke-2" />
+              Invite members
+            </Button>
+            <Button className="button" onClick={() => openAddDoc(selectedWorkspace)}>
               <Plus className="h-4 w-4 stroke-3" />
               Add Document
             </Button>
