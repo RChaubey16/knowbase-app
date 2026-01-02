@@ -32,8 +32,9 @@ export default async function Home() {
                 Select an organisation to view your workspaces and documents.
               </p>
             </div>
+            
             <Link href="/organisation/create">
-              <Button size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all">
+              <Button size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer">
                 <Plus className="mr-2 h-5 w-5" />
                 Create Organisation
               </Button>

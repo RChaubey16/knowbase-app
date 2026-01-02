@@ -7,7 +7,10 @@ import { FileText, Search, Settings, Menu, X, UserPlus } from "lucide-react";
 
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { OrganisationFields } from "@/types/organisation";
-import { InviteMembersModalProvider, useInviteMembersModal } from "../modals/invite-members-modal";
+import {
+  InviteMembersModalProvider,
+  useInviteMembersModal,
+} from "../modals/invite-members-modal";
 import { Button } from "../ui/button";
 
 // Utility function for className merging
@@ -23,9 +26,9 @@ interface SidebarProps {
 
 export function Sidebar(props: SidebarProps) {
   return (
-      <InviteMembersModalProvider>
-        <SidebarContent {...props} />
-      </InviteMembersModalProvider>
+    <InviteMembersModalProvider>
+      <SidebarContent {...props} />
+    </InviteMembersModalProvider>
   );
 }
 
@@ -36,7 +39,7 @@ export function SidebarContent({
 }: SidebarProps) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { open: openInvite } = useInviteMembersModal();
+  const { open: openInvite } = useInviteMembersModal();
   const segments = pathname.split("/").filter(Boolean);
   const currentSection = segments.at(-1);
   const isUserOwner = orgUser.role === "owner";
@@ -115,22 +118,12 @@ export function SidebarContent({
             buttonText="organisation"
             spaces={organisations}
             selectedSpace={currOrganisation}
+            userRole={orgUser.role}
           />
         </div>
 
         {/* Navigation Links */}
         <nav className="flex-1 space-y-1 px-3 py-4">
-          {isUserOwner && (
-            <Button
-              variant="outline"
-              className="button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
-              disabled={!currOrganisation.slug}
-              onClick={() => openInvite(currOrganisation.slug, "")}
-            >
-              <UserPlus className="h-4 w-4 stroke-2" />
-              Invite members to Org
-            </Button>
-          )}
           {navItems.map((item) => {
             const Icon = item.icon;
             const section = item.name.toLowerCase();
@@ -156,6 +149,18 @@ export function SidebarContent({
               </Link>
             );
           })}
+
+          {isUserOwner && (
+            <Button
+              variant="outline"
+              className="w-fit word-wrap button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
+              disabled={!currOrganisation.slug}
+              onClick={() => openInvite(currOrganisation.slug, "")}
+            >
+              <UserPlus className="h-4 w-4 stroke-2" />
+              Invite to {currOrganisation.name}
+            </Button>
+          )}
         </nav>
       </aside>
     </>

@@ -67,6 +67,7 @@ function TopBarContent({
               spaces={workspaces}
               orgSlug={orgSlug}
               selectedSpace={selectedWorkspace}
+              userRole={wsUserRole}
             />
           </>
         )}
@@ -104,13 +105,15 @@ function TopBarContent({
               </Button>
             )}
             
+            {wsUserRole !== "viewer" && 
+
             <Button
               className="button"
               onClick={() => openAddDoc(selectedWorkspace)}
             >
               <Plus className="h-4 w-4 stroke-3" />
               Add Document
-            </Button>
+            </Button>}
           </>
         )}
         <ThemeToggle />

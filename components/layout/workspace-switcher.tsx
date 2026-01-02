@@ -25,24 +25,31 @@ export function WorkspaceSwitcher({
   buttonText,
   spaces,
   selectedSpace,
-  orgSlug
+  orgSlug,
+  userRole,
 }: {
   swticherTitle: string;
   buttonText: string;
   spaces: OrganisationFields[] | WorkspaceFields[];
   selectedSpace?: OrganisationFields | WorkspaceFields;
   orgSlug?: string;
+  userRole?: string;
 }) {
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();
-  
-  const { organisations } = useOrganisations(buttonText === "organisation" ? spaces as OrganisationFields[] : undefined);
+
+  const { organisations } = useOrganisations(
+    buttonText === "organisation" ? (spaces as OrganisationFields[]) : undefined
+  );
   const { workspaces } = useWorkspaces(
-    buttonText === "workspace" ? (selectedSpace as WorkspaceFields)?.organisationId : undefined,
-    buttonText === "workspace" ? spaces as WorkspaceFields[] : undefined
+    buttonText === "workspace"
+      ? (selectedSpace as WorkspaceFields)?.organisationId
+      : undefined,
+    buttonText === "workspace" ? (spaces as WorkspaceFields[]) : undefined
   );
 
-  const currentSpaces = (buttonText === "organisation" ? organisations : workspaces) || spaces;
+  const currentSpaces =
+    (buttonText === "organisation" ? organisations : workspaces) || spaces;
 
   const [selectedWorkspace, setSelectedWorkspace] = React.useState(
     selectedSpace ?? currentSpaces[0]
@@ -82,11 +89,13 @@ export function WorkspaceSwitcher({
           <DropdownMenuItem
             key={workspace.id}
             onSelect={() => {
-              setSelectedWorkspace(workspace)
+              setSelectedWorkspace(workspace);
               if (buttonText === "workspace") {
-                router.push(`/organisation/${orgSlug}/workspaces/${workspace.slug}/documents`)
+                router.push(
+                  `/organisation/${orgSlug}/workspaces/${workspace.slug}/documents`
+                );
               } else {
-                router.push(`/organisation/${workspace.slug}`)
+                router.push(`/organisation/${workspace.slug}`);
               }
             }}
             className="flex items-center gap-2 px-2 py-2"
@@ -100,20 +109,24 @@ export function WorkspaceSwitcher({
             )}
           </DropdownMenuItem>
         ))}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="flex items-center gap-2 px-2 py-2"
-          onClick={() => {
-            if (buttonText === "workspace") {
-              open(orgSlug);
-            } else {
-              router.push(`/organisation/create`);
-            }
-          }}
-        >
-          <PlusCircle className="h-4 w-4" />
-          <span>Create {buttonText}</span>
-        </DropdownMenuItem>
+        {userRole === "owner" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex items-center gap-2 px-2 py-2"
+              onClick={() => {
+                if (buttonText === "workspace") {
+                  open(orgSlug);
+                } else {
+                  router.push(`/organisation/create`);
+                }
+              }}
+            >
+              <PlusCircle className="h-4 w-4" />
+              <span>Create {buttonText}</span>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
