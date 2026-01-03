@@ -9,10 +9,11 @@ import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
 
 export default async function Home() {
+  console.log(`HEYYYY`);
   const data: { userId: string } = await serverFetch("/auth/me");
 
   let organisations: OrganisationFields[] = [];
-  
+
   if (data && data.userId) {
     organisations = await serverFetch("/organisations");
   }
@@ -27,14 +28,19 @@ export default async function Home() {
         <div className="w-full max-w-5xl space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-2">
-              <h1 className="text-4xl font-bold tracking-tight">Your Organisations</h1>
+              <h1 className="text-4xl font-bold tracking-tight">
+                Your Organisations
+              </h1>
               <p className="text-muted-foreground text-lg">
                 Select an organisation to view your workspaces and documents.
               </p>
             </div>
-            
+
             <Link href="/organisation/create">
-              <Button size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer">
+              <Button
+                size="lg"
+                className="rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer"
+              >
                 <Plus className="mr-2 h-5 w-5" />
                 Create Organisation
               </Button>
@@ -45,10 +51,13 @@ export default async function Home() {
             <div className="flex flex-col items-center justify-center py-20 bg-card rounded-3xl border border-dashed border-border p-12 text-center">
               <h2 className="text-2xl font-semibold mb-4">Welcome back</h2>
               <p className="text-muted-foreground mb-8 text-lg max-w-md">
-                Please login to access your organisations and start managing your knowledge base.
+                Please login to access your organisations and start managing
+                your knowledge base.
               </p>
               <Link href="/login">
-                <Button size="lg" className="rounded-full px-12">Login</Button>
+                <Button size="lg" className="rounded-full px-12">
+                  Login
+                </Button>
               </Link>
             </div>
           ) : organisations.length > 0 ? (
@@ -59,10 +68,16 @@ export default async function Home() {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 bg-card/50 rounded-3xl border border-dashed border-border p-12 text-center">
-              <h2 className="text-xl font-semibold mb-2">No organisations found</h2>
-              <p className="text-muted-foreground mb-6">Create your first organisation to get started.</p>
+              <h2 className="text-xl font-semibold mb-2">
+                No organisations found
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Create your first organisation to get started.
+              </p>
               <Link href="/organisation/create">
-                <Button variant="outline" className="rounded-full">Create Organisation</Button>
+                <Button variant="outline" className="rounded-full">
+                  Create Organisation
+                </Button>
               </Link>
             </div>
           )}
@@ -71,8 +86,15 @@ export default async function Home() {
 
       <footer className="py-8 px-8 border-t border-border/40 text-center text-sm text-muted-foreground">
         <div className="flex justify-center gap-6 mb-4">
-          <Link href="/search" className="hover:text-primary transition-colors">Search</Link>
-          <Link href="/documents" className="hover:text-primary transition-colors">Documents</Link>
+          <Link href="/search" className="hover:text-primary transition-colors">
+            Search
+          </Link>
+          <Link
+            href="/documents"
+            className="hover:text-primary transition-colors"
+          >
+            Documents
+          </Link>
         </div>
         <p>&copy; {new Date().getFullYear()} KnowBase. All rights reserved.</p>
       </footer>
