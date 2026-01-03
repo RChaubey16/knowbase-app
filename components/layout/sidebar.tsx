@@ -44,15 +44,24 @@ export function SidebarContent({
   const currentSection = segments.at(-1);
   const isUserOwner = orgUser.role === "owner";
 
+  console.log(`pathname`, pathname);
   const navItems = [
-    {
-      name: "Documents",
-      icon: FileText,
-    },
-    {
-      name: "Search",
-      icon: Search,
-    },
+    ...(pathname.includes("documents") || pathname.includes("search")
+      ? [
+          {
+            name: "Documents",
+            icon: FileText,
+          },
+        ]
+      : []),
+    ...(pathname.includes("search") || pathname.includes("documents")
+      ? [
+          {
+            name: "Search",
+            icon: Search,
+          },
+        ]
+      : []),
   ];
 
   if (isUserOwner) {

@@ -48,7 +48,7 @@ export default function CreateWorkspaceForm({
       if (!response) {
         throw new Error("Failed to get response from server");
       }
-      
+
       setSubmitSuccess(true);
       router.push(
         `/organisation/${organisationSlug}/workspaces/${response.slug}/documents`
@@ -58,7 +58,11 @@ export default function CreateWorkspaceForm({
       }
     } catch (err: unknown) {
       console.error(err);
-      setError(err instanceof Error ? err.message : "Failed to create workspace. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to create workspace. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -85,6 +89,7 @@ export default function CreateWorkspaceForm({
             value={formData.name}
             onChange={handleNameChange}
             required
+            autoComplete="off"
             className="w-full"
           />
         </div>

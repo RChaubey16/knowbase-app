@@ -64,3 +64,17 @@ export function SearchResultSkeleton() {
     </div>
   );
 }
+
+export function WorkspaceCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-border/50 bg-card p-5 space-y-4 h-full">
+      <div className="flex items-center gap-3">
+        <Skeleton className="h-10 w-10 rounded-xl" />
+        <Skeleton className="h-6 w-2/3" />
+      </div>
+      <div className="pt-2">
+        <Skeleton className="h-4 w-32" />
+      </div>
+    </div>
+  );
+}

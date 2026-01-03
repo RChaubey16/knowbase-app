@@ -45,7 +45,7 @@ export async function serverFetch<T>(
       }),
       ...(headers || {}),
     },
-    cache: rest.next?.tags ? "force-cache" : rest.cache ?? "no-store",
+    // cache: rest.next?.tags ? "force-cache" : rest.cache ?? "no-store",
   });
 
   if (res.status === 401) {
