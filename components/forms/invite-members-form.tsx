@@ -65,7 +65,7 @@ export default function InviteMembersForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Add any remaining input as an email if valid
     const trimmedInput = inputValue.trim();
     const finalEmails = [...emails];
@@ -87,11 +87,11 @@ export default function InviteMembersForm({
 
     setIsSubmitting(true);
 
-    let URL = ""
+    let URL = "";
     if (workspaceSlug) {
-      URL = `/workspaces/members`
+      URL = `/workspaces/members`;
     } else {
-      URL = `/organisations/members`
+      URL = `/organisations/members`;
     }
 
     const payload: {
@@ -110,13 +110,17 @@ export default function InviteMembersForm({
       const res = await clientFetch<InviteMembersResponse>(URL, {
         method: "POST",
         headers: {
-          'X-Organisation': organisationSlug
+          "X-Organisation": organisationSlug,
         },
         body: JSON.stringify(payload),
       });
 
       if (res.added <= 0 && res.skipped.length > 0) {
-        toast.error(`Failed to invite ${res.skipped.join(", ")} email(s) as they do not exist`);
+        toast.error(
+          `Failed to invite ${res.skipped.join(
+            ", "
+          )} email(s) as they do not exist`
+        );
       } else if (res.added > 0) {
         toast.success(`Sent ${finalEmails.length} invitation(s) as ${role}`);
       }
@@ -124,7 +128,9 @@ export default function InviteMembersForm({
       onSuccess?.();
     } catch (err: unknown) {
       console.error("Invite error:", err);
-      toast.error(err instanceof Error ? err.message : "Failed to send invitations");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to send invitations"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -135,14 +141,15 @@ export default function InviteMembersForm({
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-bold tracking-tight">Invite Members</h2>
         <p className="text-muted-foreground">
-          Invite people to collaborate on this {workspaceSlug ? "Workspace" : "Organisation"}
+          Invite people to collaborate on this{" "}
+          {workspaceSlug ? "Workspace" : "Organisation"}
         </p>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="emails">Email addresses</Label>
-          <div 
+          <div
             className={cn(
               "flex flex-wrap items-center gap-2 p-2 min-h-11 rounded-md border border-input bg-transparent focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
               "dark:bg-input/30"
@@ -167,11 +174,16 @@ export default function InviteMembersForm({
               id="emails"
               type="text"
               className="flex-1 bg-transparent outline-none min-w-30 text-sm"
-              placeholder={emails.length === 0 ? "Enter emails separated by comma or enter..." : ""}
+              placeholder={
+                emails.length === 0
+                  ? "Enter emails separated by comma or enter..."
+                  : ""
+              }
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               onBlur={addEmail}
+              autoComplete="off"
             />
           </div>
         </div>
@@ -180,8 +192,8 @@ export default function InviteMembersForm({
           <Label htmlFor="role">Role</Label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full justify-between font-normal h-10 px-3 bg-transparent border-input dark:bg-input/30"
               >
                 <span className="capitalize">{role}</span>
@@ -190,18 +202,27 @@ export default function InviteMembersForm({
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
               <DropdownMenuRadioGroup value={role} onValueChange={setRole}>
-                <DropdownMenuRadioItem value="viewer" className="capitalize">Viewer</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="editor" className="capitalize">Editor</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="admin" className="capitalize">Admin</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="owner" className="capitalize">Owner</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="viewer" className="capitalize">
+                  Viewer
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="editor" className="capitalize">
+                  Editor
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="admin" className="capitalize">
+                  Admin
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="owner" className="capitalize">
+                  Owner
+                </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
           <p className="text-xs text-muted-foreground mt-1 px-1">
-            {role === 'viewer' && 'Can only view and comment on documents.'}
-            {role === 'editor' && 'Can view, edit, and create documents.'}
-            {role === 'admin' && 'Can manage workspace settings and members.'}
-            {role === 'owner' && 'Full access to all workspace features and settings.'}
+            {role === "viewer" && "Can only view and comment on documents."}
+            {role === "editor" && "Can view, edit, and create documents."}
+            {role === "admin" && "Can manage workspace settings and members."}
+            {role === "owner" &&
+              "Full access to all workspace features and settings."}
           </p>
         </div>
 

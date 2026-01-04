@@ -44,6 +44,8 @@ export function useDocuments(
       async () => {
         const res = await createDocumentAction({ workspaceSlug, payload });
         if (!res.success) throw new Error(res.message);
+        if (!res.document) throw new Error("Document not found");
+        res.document.status = "processing";
         const updatedDocs = [...(data ?? []), res.document].filter(
           (doc): doc is Document => doc !== undefined
         );

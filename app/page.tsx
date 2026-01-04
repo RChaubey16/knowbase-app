@@ -9,7 +9,6 @@ import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
 
 export default async function Home() {
-  console.log(`HEYYYY`);
   const data: { userId: string } = await serverFetch("/auth/me");
 
   let organisations: OrganisationFields[] = [];

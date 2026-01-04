@@ -1,6 +1,11 @@
 import { FileText, Link2, Clock } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardFooter,
+} from "@/components/ui/card";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import DocumentActionsDropdown from "../documents/document-actions-dropdown";
 import { timeAgo, cn } from "@/lib/utils";
@@ -23,10 +28,15 @@ const DocumentCard = ({
       key={doc.id}
       className={cn(
         "group relative flex flex-col h-full bg-card hover:bg-muted/30 transition-all duration-300 border-border/50 hover:border-primary/30 hover:shadow-md cursor-pointer overflow-hidden",
-        doc.status === "failed" && "border-red-200/50 bg-red-50/10 dark:border-red-900/50 dark:bg-red-950/5",
-        doc.status === "processing" && "border-blue-200/50 bg-blue-50/10 dark:border-blue-900/50 dark:bg-blue-950/5"
+        doc.status === "failed" &&
+          "border-red-200/50 bg-red-50/10 dark:border-red-900/50 dark:bg-red-950/5",
+        doc.status === "processing" &&
+          "border-blue-200/50 bg-blue-50/10 dark:border-blue-900/50 dark:bg-blue-950/5"
       )}
-      onClick={() => handleAction("view", doc)}
+      onClick={() => {
+        if (doc.status === "processing") return;
+        handleAction("view", doc);
+      }}
     >
       <CardHeader className="pb-3 relative">
         <div className="flex items-start justify-between gap-2">
@@ -41,13 +51,13 @@ const DocumentCard = ({
           <DocumentActionsDropdown doc={doc} handleAction={handleAction} />
         </div>
       </CardHeader>
-      
+
       <CardContent className="pb-3 flex-1 relative">
         <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed group-hover:text-foreground/80 transition-colors">
           {doc.snippet}
         </p>
       </CardContent>
-      
+
       <CardFooter className="pt-3 border-t border-border/40 flex justify-between items-center text-xs text-muted-foreground relative bg-muted/5 group-hover:bg-transparent transition-colors mt-auto">
         <div className="flex gap-3 items-center">
           <div className="flex items-center gap-1.5 font-medium">

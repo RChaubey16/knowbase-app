@@ -37,7 +37,10 @@ export default function AddDocumentForm({
     setError(null);
   };
 
-  const { addDocument } = useDocuments(workspace?.slug || "", workspace?.organisationId);
+  const { addDocument } = useDocuments(
+    workspace?.slug || "",
+    workspace?.organisationId
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +68,11 @@ export default function AddDocumentForm({
       onSuccess?.();
     } catch (err: unknown) {
       console.error(err);
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
