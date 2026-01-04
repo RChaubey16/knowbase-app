@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
+import EditDocumentForm from "../forms/edit-document-form";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import { timeAgo } from "@/lib/utils";
 import { toast } from "sonner";
@@ -37,20 +38,25 @@ import { useDocuments } from "@/lib/hooks/use-documents";
 const DocumentsList = ({
   documents,
   workspaceSlug,
-  organisationSlug
+  organisationSlug,
 }: {
   documents: Document[];
   workspaceSlug: string;
   organisationSlug?: string;
 }) => {
-  const { documents: documentsList, deleteDocument } = useDocuments(workspaceSlug, organisationSlug, documents);
+  const { documents: documentsList, deleteDocument } = useDocuments(
+    workspaceSlug,
+    organisationSlug,
+    documents
+  );
   const [viewMode, setViewMode] = useState<string>("table");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(
     null
   );
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const totalPages = Math.ceil((documentsList?.length || 0) / itemsPerPage);
   const currentDocuments = (documentsList || []).slice(
@@ -96,12 +102,15 @@ const DocumentsList = ({
   const handleAction = async (action: ActionType, doc: Document) => {
     if (action === "view") {
       setSelectedDocument(doc);
-      setIsModalOpen(true);
+      setIsViewModalOpen(true);
+    } else if (action === "edit") {
+      setSelectedDocument(doc);
+      setIsEditModalOpen(true);
     } else if (action === "delete") {
       toast.promise(deleteDocument(doc.id), {
-        loading: 'Deleting document...',
+        loading: "Deleting document...",
         success: `Successfully deleted "${doc.title}"`,
-        error: (err) => `Failed to delete: ${err.message || 'Unknown error'}`,
+        error: (err) => `Failed to delete: ${err.message || "Unknown error"}`,
       });
     }
   };
@@ -118,12 +127,12 @@ const DocumentsList = ({
   if (!documentsList || documentsList.length === 0) {
     return (
       <div className="w-full p-6">
-         <EmptyState 
-            title="No documents yet" 
-            description="Start building your knowledge base by adding your first document. You can add text, PDFs, or web links."
-            actionLabel="Add Document"
-            // onAction={() => open && open()}
-         />
+        <EmptyState
+          title="No documents yet"
+          description="Start building your knowledge base by adding your first document. You can add text, PDFs, or web links."
+          actionLabel="Add Document"
+          // onAction={() => open && open()}
+        />
       </div>
     );
   }
@@ -182,59 +191,63 @@ const DocumentsList = ({
 
       {totalPages > 1 && (
         <div className="mt-8">
-            <Pagination>
+          <Pagination>
             <PaginationContent>
-                <PaginationItem>
+              <PaginationItem>
                 <PaginationPrevious
-                    href="#"
-                    onClick={(e) => {
+                  href="#"
+                  onClick={(e) => {
                     e.preventDefault();
                     setCurrentPage((p) => Math.max(1, p - 1));
-                    }}
+                  }}
                 />
-                </PaginationItem>
-                <PaginationItem>
+              </PaginationItem>
+              <PaginationItem>
                 <PaginationLink
-                    href="#"
-                    isActive={currentPage === 1}
-                    onClick={(e) => {
+                  href="#"
+                  isActive={currentPage === 1}
+                  onClick={(e) => {
                     e.preventDefault();
                     setCurrentPage(1);
-                    }}
+                  }}
                 >
-                    1
+                  1
                 </PaginationLink>
-                </PaginationItem>
-                {totalPages >= 2 && (
-                    <PaginationItem>
-                    <PaginationLink
-                        href="#"
-                        isActive={currentPage === 2}
-                        onClick={(e) => {
-                        e.preventDefault();
-                        setCurrentPage(2);
-                        }}
-                    >
-                        2
-                    </PaginationLink>
-                    </PaginationItem>
-                )}
-                {totalPages > 2 && <PaginationItem><PaginationEllipsis /></PaginationItem>}
+              </PaginationItem>
+              {totalPages >= 2 && (
                 <PaginationItem>
-                <PaginationNext
+                  <PaginationLink
                     href="#"
+                    isActive={currentPage === 2}
                     onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(2);
+                    }}
+                  >
+                    2
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+              {totalPages > 2 && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
                     e.preventDefault();
                     if (currentPage < totalPages) setCurrentPage((p) => p + 1);
-                    }}
+                  }}
                 />
-                </PaginationItem>
+              </PaginationItem>
             </PaginationContent>
-            </Pagination>
+          </Pagination>
         </div>
       )}
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">
@@ -256,6 +269,21 @@ const DocumentsList = ({
               </p>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-xl">
+          {selectedDocument && (
+            <EditDocumentForm
+              workspace={{
+                slug: workspaceSlug,
+                organisationId: organisationSlug ?? "",
+              }}
+              document={selectedDocument}
+              onSuccess={() => setIsEditModalOpen(false)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

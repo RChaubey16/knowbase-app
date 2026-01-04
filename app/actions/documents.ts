@@ -59,3 +59,33 @@ export async function createDocumentAction({
     };
   }
 }
+export async function updateDocumentAction(
+  workspaceSlug: string,
+  docId: string | number,
+  payload: Record<string, string | number | boolean>
+) {
+  try {
+    const updatedDoc = await serverFetch<Document>(
+      `/workspaces/${workspaceSlug}/documents/${docId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    return {
+      success: true,
+      message: "Document updated successfully.",
+      document: updatedDoc,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message:
+        error instanceof Error ? error.message : "Failed to update document.",
+    };
+  }
+}

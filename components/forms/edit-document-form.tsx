@@ -5,26 +5,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useDocuments } from "@/lib/hooks/use-documents";
 import { toast } from "sonner";
+import { Document } from "@/types/document";
 
-export default function AddDocumentForm({
-  workspace,
-  onSuccess,
-}: {
-  workspace?: {
+interface EditDocumentFormProps {
+  workspace: {
     slug: string;
     organisationId: string;
   };
+  document: Document;
   onSuccess?: () => void;
-}) {
+}
+
+export default function EditDocumentForm({
+  workspace,
+  document,
+  onSuccess,
+}: EditDocumentFormProps) {
   const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    type: "text",
-    source: "Manual",
+    title: document.title,
+    content: document.content || "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,9 +41,9 @@ export default function AddDocumentForm({
     setError(null);
   };
 
-  const { addDocument } = useDocuments(
-    workspace?.slug || "",
-    workspace?.organisationId
+  const { updateDocument } = useDocuments(
+    workspace.slug,
+    workspace.organisationId
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,15 +60,9 @@ export default function AddDocumentForm({
     setIsSubmitting(true);
     setError(null);
 
-    if (!workspace?.slug) {
-      setError("Workspace is not properly configured.");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      await addDocument(formData);
-      toast.success("Document added successfully");
+      await updateDocument(document.id, formData);
+      toast.success("Document updated successfully");
       onSuccess?.();
     } catch (err: unknown) {
       console.error(err);
@@ -83,9 +79,9 @@ export default function AddDocumentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-bold tracking-tight">Add Document</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Edit Document</h2>
         <p className="text-muted-foreground">
-          Enter the details of the new document
+          Update the details of your document
         </p>
       </div>
 
@@ -111,36 +107,8 @@ export default function AddDocumentForm({
             value={formData.content}
             onChange={handleChange}
             required
-            rows={5}
+            rows={10}
           />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
-            <Select
-              id="type"
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-            >
-              <option value="text">text</option>
-              <option value="URL">URL</option>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="source">Source</Label>
-            <Select
-              id="source"
-              name="source"
-              value={formData.source}
-              onChange={handleChange}
-            >
-              <option value="Manual">Manual</option>
-              <option value="webpage">webpage</option>
-            </Select>
-          </div>
         </div>
 
         {error && (
@@ -150,7 +118,7 @@ export default function AddDocumentForm({
         )}
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Adding..." : "Add Document"}
+          {isSubmitting ? "Updating..." : "Update Document"}
         </Button>
       </div>
     </form>

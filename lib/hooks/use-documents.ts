@@ -4,6 +4,7 @@ import { Document } from "@/types/document";
 import {
   deleteDocumentAction,
   createDocumentAction,
+  updateDocumentAction,
 } from "@/app/actions/documents";
 
 export function useDocuments(
@@ -79,11 +80,45 @@ export function useDocuments(
     );
   };
 
+  const updateDocument = async (
+    docId: string | number,
+    payload: Record<string, string | number | boolean>
+  ) => {
+    const currentDoc = data?.find((doc) => doc.id === docId);
+    if (!currentDoc) return;
+
+    const updatedDoc: Document = {
+      ...currentDoc,
+      ...(payload as unknown as Partial<Document>),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const optimisticData = data?.map((doc) =>
+      doc.id === docId ? updatedDoc : doc
+    );
+
+    return mutate(
+      async () => {
+        const res = await updateDocumentAction(workspaceSlug, docId, payload);
+        if (!res.success) throw new Error(res.message);
+        if (!res.document) throw new Error("Document not found");
+        return data?.map((doc) => (doc.id === docId ? res.document : doc));
+      },
+      {
+        optimisticData,
+        rollbackOnError: true,
+        populateCache: true,
+        revalidate: false,
+      }
+    );
+  };
+
   return {
     documents: data,
     isLoading,
     isError: error,
     addDocument,
+    updateDocument,
     deleteDocument,
     refresh: mutate,
   };
