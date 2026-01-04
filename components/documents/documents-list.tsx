@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
-import EditDocumentForm from "../forms/edit-document-form";
+import DocumentForm from "../forms/document-form";
 import { Document, DocumentStatus, ActionType } from "@/types/document";
 import { timeAgo } from "@/lib/utils";
 import { toast } from "sonner";
@@ -275,7 +275,7 @@ const DocumentsList = ({
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent className="sm:max-w-xl">
           {selectedDocument && (
-            <EditDocumentForm
+            <DocumentForm
               workspace={{
                 slug: workspaceSlug,
                 organisationId: organisationSlug ?? "",

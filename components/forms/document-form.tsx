@@ -9,22 +9,29 @@ import { Select } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useDocuments } from "@/lib/hooks/use-documents";
 import { toast } from "sonner";
+import { Document } from "@/types/document";
 
-export default function AddDocumentForm({
-  workspace,
-  onSuccess,
-}: {
+interface DocumentFormProps {
   workspace?: {
     slug: string;
     organisationId: string;
   };
+  document?: Document;
   onSuccess?: () => void;
-}) {
+}
+
+export default function DocumentForm({
+  workspace,
+  document,
+  onSuccess,
+}: DocumentFormProps) {
+  const isEdit = !!document;
+
   const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    type: "text",
-    source: "Manual",
+    title: document?.title || "",
+    content: document?.content || "",
+    type: document?.type || "text",
+    source: document?.source || "Manual",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +46,7 @@ export default function AddDocumentForm({
     setError(null);
   };
 
-  const { addDocument } = useDocuments(
+  const { addDocument, updateDocument } = useDocuments(
     workspace?.slug || "",
     workspace?.organisationId
   );
@@ -65,8 +72,17 @@ export default function AddDocumentForm({
     }
 
     try {
-      await addDocument(formData);
-      toast.success("Document added successfully");
+      if (isEdit && document) {
+        const updatePayload = {
+          title: formData.title,
+          content: formData.content,
+        };
+        await updateDocument(document.id, updatePayload);
+        toast.success("Document updated successfully");
+      } else {
+        await addDocument(formData);
+        toast.success("Document added successfully");
+      }
       onSuccess?.();
     } catch (err: unknown) {
       console.error(err);
@@ -83,9 +99,13 @@ export default function AddDocumentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-bold tracking-tight">Add Document</h2>
+        <h2 className="text-2xl font-bold tracking-tight">
+          {isEdit ? "Edit Document" : "Add Document"}
+        </h2>
         <p className="text-muted-foreground">
-          Enter the details of the new document
+          {isEdit
+            ? "Update the details of your document"
+            : "Enter the details of the new document"}
         </p>
       </div>
 
@@ -111,37 +131,39 @@ export default function AddDocumentForm({
             value={formData.content}
             onChange={handleChange}
             required
-            rows={5}
+            rows={isEdit ? 10 : 5}
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
-            <Select
-              id="type"
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-            >
-              <option value="text">text</option>
-              <option value="URL">URL</option>
-            </Select>
-          </div>
+        {!isEdit && (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="type">Type</Label>
+              <Select
+                id="type"
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+              >
+                <option value="text">text</option>
+                <option value="URL">URL</option>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="source">Source</Label>
-            <Select
-              id="source"
-              name="source"
-              value={formData.source}
-              onChange={handleChange}
-            >
-              <option value="Manual">Manual</option>
-              <option value="webpage">webpage</option>
-            </Select>
+            <div className="space-y-2">
+              <Label htmlFor="source">Source</Label>
+              <Select
+                id="source"
+                name="source"
+                value={formData.source}
+                onChange={handleChange}
+              >
+                <option value="Manual">Manual</option>
+                <option value="webpage">webpage</option>
+              </Select>
+            </div>
           </div>
-        </div>
+        )}
 
         {error && (
           <Alert variant="destructive">
@@ -150,7 +172,13 @@ export default function AddDocumentForm({
         )}
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Adding..." : "Add Document"}
+          {isSubmitting
+            ? isEdit
+              ? "Updating..."
+              : "Adding..."
+            : isEdit
+            ? "Update Document"
+            : "Add Document"}
         </Button>
       </div>
     </form>

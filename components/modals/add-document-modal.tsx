@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import AddDocumentForm from "../forms/add-document-form";
+import DocumentForm from "../forms/document-form";
 import { WorkspaceFields } from "@/types/workspace";
 
 type ModalContextType = {
@@ -33,10 +33,7 @@ export function AddDocumentModalProvider({
       {children}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-xl">
-          <AddDocumentForm
-            workspace={workspace}
-            onSuccess={handleClose}
-          />
+          <DocumentForm workspace={workspace} onSuccess={handleClose} />
         </DialogContent>
       </Dialog>
     </AddDocumentModalContext.Provider>
