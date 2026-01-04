@@ -16,6 +16,17 @@ import { OrganisationFields } from "@/types/organisation";
 import { WorkspaceFields } from "@/types/workspace";
 import { useRouter } from "next/navigation";
 import { useCreateWorkspaceModal } from "../modals/create-workspace-modal";
+import { Pencil, Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 import { useOrganisations } from "@/lib/hooks/use-organisations";
 import { useWorkspaces } from "@/lib/hooks/use-workspaces";
@@ -48,6 +59,9 @@ export function WorkspaceSwitcher({
     buttonText === "workspace" ? (spaces as WorkspaceFields[]) : undefined
   );
 
+  const { updateOrganisation, deleteOrganisation } = useOrganisations();
+  const { updateWorkspace, deleteWorkspace } = useWorkspaces(orgSlug);
+
   const currentSpaces =
     (buttonText === "organisation" ? organisations : workspaces) || spaces;
 
@@ -55,12 +69,73 @@ export function WorkspaceSwitcher({
     selectedSpace ?? currentSpaces[0]
   );
 
+  const [editingItem, setEditingItem] = React.useState<
+    OrganisationFields | WorkspaceFields | null
+  >(null);
+  const [deletingItem, setDeletingItem] = React.useState<
+    OrganisationFields | WorkspaceFields | null
+  >(null);
+  const [newName, setNewName] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
   // Sync state if selectedSpace changes (e.g. navigation)
   React.useEffect(() => {
     if (selectedSpace) {
       setSelectedWorkspace(selectedSpace);
     }
   }, [selectedSpace]);
+
+  const onEdit = (item: OrganisationFields | WorkspaceFields) => {
+    setEditingItem(item);
+    setNewName(item.name);
+  };
+
+  const handleUpdate = async () => {
+    if (!editingItem || !newName.trim()) return;
+    setIsSubmitting(true);
+    try {
+      if (buttonText === "organisation") {
+        await updateOrganisation(
+          (editingItem as OrganisationFields).id,
+          newName
+        );
+      } else {
+        await updateWorkspace((editingItem as WorkspaceFields).id, newName);
+      }
+      toast.success(
+        `${
+          buttonText === "organisation" ? "Organisation" : "Workspace"
+        } updated`
+      );
+      setEditingItem(null);
+    } catch {
+      toast.error("Failed to update");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deletingItem) return;
+    setIsSubmitting(true);
+    try {
+      if (buttonText === "organisation") {
+        await deleteOrganisation((deletingItem as OrganisationFields).id);
+      } else {
+        await deleteWorkspace((deletingItem as WorkspaceFields).id);
+      }
+      toast.success(
+        `${
+          buttonText === "organisation" ? "Organisation" : "Workspace"
+        } deleted`
+      );
+      setDeletingItem(null);
+    } catch {
+      toast.error("Failed to delete");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -98,14 +173,42 @@ export function WorkspaceSwitcher({
                 router.push(`/organisation/${workspace.slug}`);
               }
             }}
-            className="flex items-center gap-2 px-2 py-2"
+            className="flex items-center gap-2 px-2 py-2 group"
           >
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-[10px] font-bold">
               {workspace.name[0]}
             </div>
-            <span className="flex-1">{workspace.name}</span>
+            <span className="flex-1 truncate">{workspace.name}</span>
+
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 hover:bg-muted"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onEdit(workspace);
+                }}
+              >
+                <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 hover:bg-destructive/10 hover:text-destructive"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDeletingItem(workspace);
+                }}
+              >
+                <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
+              </Button>
+            </div>
+
             {selectedWorkspace.id === workspace.id && (
-              <Check className="h-4 w-4" />
+              <Check className="h-4 w-4 shrink-0" />
             )}
           </DropdownMenuItem>
         ))}
@@ -128,6 +231,57 @@ export function WorkspaceSwitcher({
           </>
         )}
       </DropdownMenuContent>
+
+      <Dialog open={!!editingItem} onOpenChange={() => setEditingItem(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit {buttonText}</DialogTitle>
+            <DialogDescription>
+              Update the name of your {buttonText}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Name"
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingItem(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdate} disabled={isSubmitting}>
+              {isSubmitting ? "Updating..." : "Update"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!deletingItem} onOpenChange={() => setDeletingItem(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete {buttonText}</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this {buttonText}? This action
+              cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingItem(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DropdownMenu>
   );
 }
