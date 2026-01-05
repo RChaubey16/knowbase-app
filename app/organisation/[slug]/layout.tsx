@@ -1,8 +1,10 @@
+import { notFound } from "next/navigation";
+
 import SetOrganisation from "@/app/set-organisation";
 import { Sidebar } from "@/components/layout/sidebar";
+
 import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
-import { notFound } from "next/navigation";
 
 export default async function OrganisationLayout({
   children,

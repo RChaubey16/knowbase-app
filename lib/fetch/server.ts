@@ -1,4 +1,3 @@
-// lib/fetch/server.ts
 import "server-only";
 
 import { cookies } from "next/headers";
@@ -33,8 +32,6 @@ export async function serverFetch<T>(
     .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
-
-  console.log("ORG HEADER", organisationId)
 
   const res = await fetch(url.toString(), {
     ...rest,

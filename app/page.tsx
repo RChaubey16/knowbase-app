@@ -84,17 +84,6 @@ export default async function Home() {
       </main>
 
       <footer className="py-8 px-8 border-t border-border/40 text-center text-sm text-muted-foreground">
-        <div className="flex justify-center gap-6 mb-4">
-          <Link href="/search" className="hover:text-primary transition-colors">
-            Search
-          </Link>
-          <Link
-            href="/documents"
-            className="hover:text-primary transition-colors"
-          >
-            Documents
-          </Link>
-        </div>
         <p>&copy; {new Date().getFullYear()} KnowBase. All rights reserved.</p>
       </footer>
     </div>

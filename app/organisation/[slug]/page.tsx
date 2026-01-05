@@ -1,6 +1,9 @@
+import { notFound } from "next/navigation";
+
 import CreateWorkspaceCTA from "@/components/cta/create-workspace-cta";
 import WorkspaceCard from "@/components/cards/workspace-card";
 import CreateWorkspaceButton from "@/components/buttons/create-workspace-button";
+
 import { serverFetch } from "@/lib/fetch/server";
 import { WorkspaceFields } from "@/types/workspace";
 import { OrganisationFields } from "@/types/organisation";
@@ -12,17 +15,19 @@ type PageProps = {
 export default async function OrganisationHomePage({ params }: PageProps) {
   const { slug } = await params;
 
+  const [currentOrganisation] = await serverFetch<OrganisationFields[]>(
+    `/organisations/${slug}`
+  );
+
+  if (!currentOrganisation) {
+    notFound();
+  }
+
   const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
     headers: {
       "X-Organisation": slug,
     },
   });
-
-  // Fetch organisation details to display the name
-  const organisations = await serverFetch<OrganisationFields[]>(
-    "/organisations"
-  );
-  const currentOrganisation = organisations.find((org) => org.slug === slug);
 
   const noWorkspaces = workspaces.length === 0;
 

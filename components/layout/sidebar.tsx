@@ -44,7 +44,6 @@ export function SidebarContent({
   const currentSection = segments.at(-1);
   const isUserOwner = orgUser.role === "owner";
 
-  console.log(`pathname`, pathname);
   const navItems = [
     ...(pathname.includes("documents") || pathname.includes("search")
       ? [

@@ -129,6 +129,15 @@ export function WorkspaceSwitcher({
           buttonText === "organisation" ? "Organisation" : "Workspace"
         } deleted`
       );
+
+      if (buttonText === "organisation" && deletingItem.slug == selectedSpace?.slug) {
+        router.push("/");
+      }
+
+      if (buttonText === "workspace" && deletingItem.slug == selectedSpace?.slug) {
+        router.push(`/organisation/${orgSlug}`);
+      }
+
       setDeletingItem(null);
     } catch {
       toast.error("Failed to delete");
