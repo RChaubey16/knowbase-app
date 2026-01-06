@@ -39,6 +39,7 @@ export function useDocuments(
       source: (payload.source as string) ?? "Manual",
       type: (payload.type as string) ?? "text",
       title: (payload.title as string) ?? "Untitled",
+      isIndexed: (payload.isIndexed as boolean) ?? true,
     };
 
     return mutate(

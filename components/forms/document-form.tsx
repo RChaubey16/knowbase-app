@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
 import { useDocuments } from "@/lib/hooks/use-documents";
 import { toast } from "sonner";
 import { Document } from "@/types/document";
@@ -32,6 +33,7 @@ export default function DocumentForm({
     content: document?.content || "",
     type: document?.type || "text",
     source: document?.source || "Manual",
+    isIndexed: document?.isIndexed ?? true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,6 +78,7 @@ export default function DocumentForm({
         const updatePayload = {
           title: formData.title,
           content: formData.content,
+          isIndexed: formData.isIndexed,
         };
         await updateDocument(document.id, updatePayload);
         toast.success("Document updated successfully");
@@ -132,6 +135,24 @@ export default function DocumentForm({
             onChange={handleChange}
             required
             rows={isEdit ? 10 : 5}
+          />
+        </div>
+
+        <div className="flex items-center justify-between rounded-lg border p-4 shadow-sm">
+          <div className="space-y-0.5">
+            <Label htmlFor="isIndexed" className="text-base">
+              Index this document for AI Semantic Search
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              Allow this document to be searchable using AI semantic retrieval.
+            </p>
+          </div>
+          <Switch
+            id="isIndexed"
+            checked={formData.isIndexed}
+            onCheckedChange={(checked) =>
+              setFormData((prev) => ({ ...prev, isIndexed: checked }))
+            }
           />
         </div>
 

@@ -10,6 +10,7 @@ export interface Document {
   source: string;
   type: string;
   status: DocumentStatus;
+  isIndexed: boolean;
   updatedAt: string;
   createdAt: string;
 }
