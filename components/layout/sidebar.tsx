@@ -99,7 +99,7 @@ export function SidebarContent({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r bg-sidebar text-sidebar-foreground border-sidebar-border transition-transform duration-300 lg:translate-x-0 lg:static",
+          "fixed left-0 top-0 z-40 flex w-64 flex-col border-r bg-sidebar text-sidebar-foreground border-sidebar-border transition-transform duration-300 lg:translate-x-0 lg:static",
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >

@@ -179,6 +179,15 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE + Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

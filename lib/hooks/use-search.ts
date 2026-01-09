@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { SWRConfiguration } from "swr";
 import { clientFetch } from "@/lib/fetch/client";
 import { SearchResult } from "@/types/search-result";
 
@@ -6,7 +6,8 @@ export function useSearch(
   workspaceSlug: string,
   organisationSlug: string,
   query: string,
-  mode: string
+  mode: string,
+  options?: SWRConfiguration
 ) {
   const fetcher = (url: string) =>
     clientFetch<SearchResult[]>(url, {
@@ -16,19 +17,18 @@ export function useSearch(
     });
 
   const normalizedQuery = query.trim();
-
-  console.log(`mode`, mode)
-
+  
   const { data, error, isLoading, mutate } = useSWR(
     workspaceSlug && normalizedQuery
       ? `/workspaces/${workspaceSlug}/documents/search?q=${encodeURIComponent(
           normalizedQuery
-        )}`
+        )}&mode=${mode}`
       : null,
     fetcher,
     {
       revalidateOnFocus: false,
       shouldRetryOnError: false,
+      ...options,
     }
   );
 
