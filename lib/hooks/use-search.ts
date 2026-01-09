@@ -5,7 +5,8 @@ import { SearchResult } from "@/types/search-result";
 export function useSearch(
   workspaceSlug: string,
   organisationSlug: string,
-  query: string
+  query: string,
+  mode: string
 ) {
   const fetcher = (url: string) =>
     clientFetch<SearchResult[]>(url, {
@@ -15,6 +16,8 @@ export function useSearch(
     });
 
   const normalizedQuery = query.trim();
+
+  console.log(`mode`, mode)
 
   const { data, error, isLoading, mutate } = useSWR(
     workspaceSlug && normalizedQuery
