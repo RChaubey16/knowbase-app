@@ -256,8 +256,6 @@ export default function SearchDocuments({
     return title.includes(normalizedQuery) || snippet.includes(normalizedQuery);
   });
 
-  console.log(`MESSAGES`, messages)
-
   return (
     <main className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden bg-background">
       {/* Header with Mode Toggle */}
@@ -338,7 +336,7 @@ export default function SearchDocuments({
               </div>
             ) : (
               <div className="space-y-10 pb-32">
-                {messages.length !== 0 ? (
+                {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-20 text-center space-y-8 animate-in zoom-in-95 duration-1000">
                     <div className="relative">
                       <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
@@ -351,7 +349,7 @@ export default function SearchDocuments({
                         Meet your AI Knowledge Assistant
                       </h2>
                       <p className="text-muted-foreground text-xl max-w-md mx-auto leading-relaxed">
-                        I can help you navigate through your documents. Just ask a question and I&pos;ll find the answers.
+                        I can help you navigate through your documents. Just ask a question and I&apos;ll find the answers.
                       </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl w-full">
@@ -373,7 +371,7 @@ export default function SearchDocuments({
                   </div>
                 ) : (
                   <div className="space-y-10">
-                    {MESSAGES.map((message) => (
+                    {messages.map((message) => (
                       <div
                         key={message.id}
                         className={cn(
