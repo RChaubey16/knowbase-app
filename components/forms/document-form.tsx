@@ -149,7 +149,7 @@ export default function DocumentForm({
           </div>
           <Switch
             id="isIndexed"
-            checked={formData.isIndexed}
+            checked={isEdit? false : formData.isIndexed}
             onCheckedChange={(checked) =>
               setFormData((prev) => ({ ...prev, isIndexed: checked }))
             }
@@ -192,7 +192,7 @@ export default function DocumentForm({
           </Alert>
         )}
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full cursor-pointer" disabled={isSubmitting}>
           {isSubmitting
             ? isEdit
               ? "Updating..."
