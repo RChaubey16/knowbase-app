@@ -131,7 +131,6 @@ const DocumentsList = ({
           title="No documents yet"
           description="Start building your knowledge base by adding your first document. You can add text, PDFs, or web links."
           actionLabel="Add Document"
-          // onAction={() => open && open()}
         />
       </div>
     );
@@ -154,10 +153,10 @@ const DocumentsList = ({
             }
           }}
         >
-          <ToggleGroupItem value="table" aria-label="Table view">
+          <ToggleGroupItem value="table" aria-label="Table view" className="cursor-pointer">
             <LayoutList className="h-4 w-4" />
           </ToggleGroupItem>
-          <ToggleGroupItem value="cards" aria-label="Cards view">
+          <ToggleGroupItem value="cards" aria-label="Cards view" className="cursor-pointer">
             <LayoutGrid className="h-4 w-4" />
           </ToggleGroupItem>
         </ToggleGroup>

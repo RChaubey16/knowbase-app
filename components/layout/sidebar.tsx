@@ -63,13 +63,6 @@ export function SidebarContent({
       : []),
   ];
 
-  if (isUserOwner) {
-    navItems.push({
-      name: "Settings",
-      icon: Settings,
-    });
-  }
-
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (

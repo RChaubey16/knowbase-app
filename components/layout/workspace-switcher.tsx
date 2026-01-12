@@ -154,7 +154,7 @@ export function WorkspaceSwitcher({
           size="sm"
           role="combobox"
           aria-label="Select a workspace"
-          className="w-fit justify-between hover:bg-muted/50 text-foreground font-medium border border-border/40"
+          className="w-fit justify-between hover:bg-muted/50 text-foreground font-medium border border-border/40 cursor-pointer"
         >
           <div className="flex items-center gap-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
@@ -182,7 +182,7 @@ export function WorkspaceSwitcher({
                 router.push(`/organisation/${workspace.slug}`);
               }
             }}
-            className="flex items-center gap-2 px-2 py-2 group"
+            className="flex items-center gap-2 px-2 py-2 group cursor-pointer"
           >
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-[10px] font-bold">
               {workspace.name[0]}
@@ -225,7 +225,7 @@ export function WorkspaceSwitcher({
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="flex items-center gap-2 px-2 py-2"
+              className="flex items-center gap-2 px-2 py-2 cursor-pointer"
               onClick={() => {
                 if (buttonText === "workspace") {
                   open(orgSlug);
