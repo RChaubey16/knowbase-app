@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
+import { FileText, Globe, FileType, CheckCircle2 } from "lucide-react";
 import { useDocuments } from "@/lib/hooks/use-documents";
 import { toast } from "sonner";
 import { Document } from "@/types/document";
@@ -28,11 +29,35 @@ export default function DocumentForm({
 }: DocumentFormProps) {
   const isEdit = !!document;
 
+  const DOCUMENT_OPTIONS = [
+    {
+      id: "document",
+      label: "Document",
+      type: "document",
+      source: "manual",
+      icon: FileText,
+    },
+    {
+      id: "webpage",
+      label: "Webpage",
+      type: "webpage",
+      source: "url",
+      icon: Globe,
+    },
+    {
+      id: "pdf",
+      label: "PDF",
+      type: "pdf",
+      source: "pdf",
+      icon: FileType,
+    },
+  ];
+
   const [formData, setFormData] = useState({
     title: document?.title || "",
     content: document?.content || "",
-    type: document?.type || "text",
-    source: document?.source || "Manual",
+    type: document?.type || "document",
+    source: document?.source || "manual",
     isIndexed: document?.isIndexed ?? true,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -157,31 +182,53 @@ export default function DocumentForm({
         </div>
 
         {!isEdit && (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
-              <Select
-                id="type"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-              >
-                <option value="text">text</option>
-                <option value="URL">URL</option>
-              </Select>
-            </div>
+          <div className="space-y-3">
+            <Label>Document Type</Label>
+            <div className="grid grid-cols-3 gap-4">
+              {DOCUMENT_OPTIONS.map((option) => {
+                const isSelected =
+                  formData.type === option.type &&
+                  formData.source === option.source;
+                const Icon = option.icon;
 
-            <div className="space-y-2">
-              <Label htmlFor="source">Source</Label>
-              <Select
-                id="source"
-                name="source"
-                value={formData.source}
-                onChange={handleChange}
-              >
-                <option value="Manual">Manual</option>
-                <option value="webpage">webpage</option>
-              </Select>
+                return (
+                  <Card
+                    key={option.id}
+                    className={`relative cursor-pointer transition-all hover:border-primary/50 ${
+                      isSelected
+                        ? "border-primary bg-primary/5 ring-1 ring-primary"
+                        : "bg-card border-border"
+                    }`}
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        type: option.type,
+                        source: option.source,
+                      }))
+                    }
+                  >
+                    <CardContent className="flex flex-col items-center justify-center space-y-2 p-4">
+                      {isSelected && (
+                        <div className="absolute top-2 right-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary" />
+                        </div>
+                      )}
+                      <Icon
+                        className={`h-8 w-8 ${
+                          isSelected ? "text-primary" : "text-muted-foreground"
+                        }`}
+                      />
+                      <span
+                        className={`text-sm font-medium ${
+                          isSelected ? "text-primary" : "text-foreground"
+                        }`}
+                      >
+                        {option.label}
+                      </span>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         )}
