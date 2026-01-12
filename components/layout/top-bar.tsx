@@ -77,7 +77,7 @@ function TopBarContent({
       <div className="flex items-center gap-3">
         {type === "documents" && (
           <>
-            <div className="flex items-center gap-2 px-3 py-1 bg-muted/30 rounded-full border border-border/50">
+            {/* <div className="flex items-center gap-2 px-3 py-1 bg-muted/30 rounded-full border border-border/50">
               <span className="text-xs font-medium text-muted-foreground">
                 Index:
               </span>
@@ -91,7 +91,7 @@ function TopBarContent({
               >
                 {indexStatus}
               </Badge>
-            </div>
+            </div> */}
 
             {wsUserRole === "owner" && (
               <Button
