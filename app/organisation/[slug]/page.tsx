@@ -15,7 +15,7 @@ type PageProps = {
 export default async function OrganisationHomePage({ params }: PageProps) {
   const { slug } = await params;
 
-  const [currentOrganisation] = await serverFetch<OrganisationFields[]>(
+  const currentOrganisation = await serverFetch<OrganisationFields>(
     `/organisations/${slug}`
   );
 

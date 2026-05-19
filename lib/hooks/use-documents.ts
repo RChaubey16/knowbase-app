@@ -63,7 +63,6 @@ export function useDocuments(
   };
 
   const deleteDocument = async (docId: string | number) => {
-    console.log(`doc id to be deleted`, docId);
     const filteredData = data?.filter((doc) => doc.id !== docId);
 
     return mutate(

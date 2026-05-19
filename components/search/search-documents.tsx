@@ -331,7 +331,7 @@ export default function SearchDocuments({
                   searchQuery={searchQuery}
                   isLoading={isLoading}
                   hasSearched={searchQuery !== ""}
-                  onResultClick={(res) => console.log(res)}
+                  onResultClick={() => {}}
                 />
               </div>
             ) : (

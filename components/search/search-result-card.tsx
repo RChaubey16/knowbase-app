@@ -17,8 +17,6 @@ export function SearchResultCard({
   searchQuery,
   onClick,
 }: SearchResultCardProps) {
-  console.log(`result`, result);
-
   const highlightText = (text: string, query?: string) => {
     if (!query || !query.trim()) return text;
 
