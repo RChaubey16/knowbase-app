@@ -31,16 +31,16 @@ export default function DocumentForm({
 
   const DOCUMENT_OPTIONS = [
     {
-      id: "document",
+      id: "text",
       label: "Document",
-      type: "document",
+      type: "text",
       source: "manual",
       icon: FileText,
     },
     {
-      id: "webpage",
+      id: "url",
       label: "Webpage",
-      type: "webpage",
+      type: "url",
       source: "url",
       icon: Globe,
     },
@@ -56,7 +56,7 @@ export default function DocumentForm({
   const [formData, setFormData] = useState({
     title: document?.title || "",
     content: document?.content || "",
-    type: document?.type || "document",
+    type: document?.type || "text",
     source: document?.source || "manual",
     isIndexed: document?.isIndexed ?? true,
   });

@@ -22,7 +22,11 @@ export function useDocuments(
   const { data, error, isLoading, mutate } = useSWR(
     workspaceSlug ? `/workspaces/${workspaceSlug}/documents` : null,
     fetcher,
-    { fallbackData }
+    {
+      fallbackData,
+      refreshInterval: (latestData) =>
+        latestData?.some((d) => d.status === "processing") ? 4000 : 0,
+    }
   );
 
   const addDocument = async (

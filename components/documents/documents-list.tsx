@@ -35,6 +35,18 @@ import { toast } from "sonner";
 import { EmptyState } from "../ui/empty-state";
 import { useDocuments } from "@/lib/hooks/use-documents";
 
+function getPageNumbers(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | "ellipsis")[] = [1];
+  if (current > 3) pages.push("ellipsis");
+  for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+    pages.push(i);
+  }
+  if (current < total - 2) pages.push("ellipsis");
+  pages.push(total);
+  return pages;
+}
+
 const DocumentsList = ({
   documents,
   workspaceSlug,
@@ -57,6 +69,7 @@ const DocumentsList = ({
   );
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const totalPages = Math.ceil((documentsList?.length || 0) / itemsPerPage);
   const currentDocuments = (documentsList || []).slice(
@@ -131,7 +144,16 @@ const DocumentsList = ({
           title="No documents yet"
           description="Start building your knowledge base by adding your first document. You can add text, PDFs, or web links."
           actionLabel="Add Document"
+          onAction={() => setIsAddModalOpen(true)}
         />
+        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+          <DialogContent className="sm:max-w-xl">
+            <DocumentForm
+              workspace={{ slug: workspaceSlug, organisationId: organisationSlug ?? "" }}
+              onSuccess={() => setIsAddModalOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -201,36 +223,25 @@ const DocumentsList = ({
                   }}
                 />
               </PaginationItem>
-              <PaginationItem>
-                <PaginationLink
-                  href="#"
-                  isActive={currentPage === 1}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentPage(1);
-                  }}
-                >
-                  1
-                </PaginationLink>
-              </PaginationItem>
-              {totalPages >= 2 && (
-                <PaginationItem>
-                  <PaginationLink
-                    href="#"
-                    isActive={currentPage === 2}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setCurrentPage(2);
-                    }}
-                  >
-                    2
-                  </PaginationLink>
-                </PaginationItem>
-              )}
-              {totalPages > 2 && (
-                <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
+              {getPageNumbers(currentPage, totalPages).map((page, i) =>
+                page === "ellipsis" ? (
+                  <PaginationItem key={`ellipsis-${i}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      isActive={currentPage === page}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page);
+                      }}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
               )}
               <PaginationItem>
                 <PaginationNext

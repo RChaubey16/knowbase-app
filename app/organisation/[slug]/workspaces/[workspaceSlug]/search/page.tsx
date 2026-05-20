@@ -3,7 +3,7 @@ import SearchDocuments from "@/components/search/search-documents";
 export default async function WorkspaceSearchPage({
   params,
 }: {
-  params: { workspaceSlug: string, slug: string };
+  params: Promise<{ workspaceSlug: string; slug: string }>;
 }) {
   const { workspaceSlug, slug } = await params;
 

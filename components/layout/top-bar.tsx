@@ -1,9 +1,9 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Plus, UserPlus } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "../theme-toggle";
@@ -16,11 +16,9 @@ import {
   useInviteMembersModal,
 } from "../modals/invite-members-modal";
 import { WorkspaceFields } from "@/types/workspace";
-import { UserPlus } from "lucide-react";
 
 interface TopBarProps {
   indexStatus: "ready" | "updating";
-  type: "search" | "documents";
   noWorkspaces?: boolean;
   workspaces: WorkspaceFields[];
   orgSlug: string;
@@ -40,7 +38,6 @@ export function TopBar(props: TopBarProps) {
 
 function TopBarContent({
   indexStatus,
-  type,
   noWorkspaces,
   workspaces,
   orgSlug,
@@ -49,6 +46,8 @@ function TopBarContent({
 }: TopBarProps) {
   const { open: openAddDoc } = useAddDocumentModal();
   const { open: openInvite } = useInviteMembersModal();
+  const pathname = usePathname();
+  const isSearchPage = pathname.endsWith("/search");
   const selectedWorkspace = workspaces.find(
     (workspace) => workspace.slug === workspaceSlug
   );
@@ -75,7 +74,7 @@ function TopBarContent({
       </div>
 
       <div className="flex items-center gap-3">
-        {type === "documents" && (
+        {!isSearchPage && (
           <>
             {/* <div className="flex items-center gap-2 px-3 py-1 bg-muted/30 rounded-full border border-border/50">
               <span className="text-xs font-medium text-muted-foreground">

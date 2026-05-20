@@ -28,7 +28,6 @@ export default async function WorkspaceLayout({
     <>
       <TopBar
         indexStatus="ready"
-        type="documents"
         noWorkspaces={noWorkspaces}
         workspaces={workspaces}
         orgSlug={slug}

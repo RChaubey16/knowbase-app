@@ -17,99 +17,6 @@ interface Message {
   timestamp: Date;
 }
 
-const MESSAGES = [
-  {
-    id: "1",
-    role: "user",
-    content: "Hey, can you help me debug this React issue?",
-    timestamp: new Date("2026-01-09T10:00:00"),
-  },
-  {
-    id: "2",
-    role: "assistant",
-    content: "Sure. What’s the error you’re seeing and where does it happen?",
-    timestamp: new Date("2026-01-09T10:00:05"),
-  },
-  {
-    id: "3",
-    role: "user",
-    content: "State updates aren’t triggering a re-render.",
-    timestamp: new Date("2026-01-09T10:00:20"),
-  },
-  {
-    id: "4",
-    role: "assistant",
-    content: "Are you mutating state directly or using the setter properly?",
-    timestamp: new Date("2026-01-09T10:00:30"),
-  },
-  {
-    id: "5",
-    role: "user",
-    content: "I might be mutating an array before calling setState.",
-    timestamp: new Date("2026-01-09T10:00:45"),
-  },
-  {
-    id: "6",
-    role: "assistant",
-    content: "That’ll do it. React won’t detect changes if the reference stays the same.",
-    timestamp: new Date("2026-01-09T10:00:55"),
-  },
-  {
-    id: "7",
-    role: "user",
-    content: "So I should create a new array instead?",
-    timestamp: new Date("2026-01-09T10:01:10"),
-  },
-  {
-    id: "8",
-    role: "assistant",
-    content: "Exactly. Use spread, map, or filter to return a new array.",
-    timestamp: new Date("2026-01-09T10:01:20"),
-  },
-  {
-    id: "9",
-    role: "user",
-    content: "Got it. That fixed the issue.",
-    timestamp: new Date("2026-01-09T10:01:40"),
-  },
-  {
-    id: "10",
-    role: "assistant",
-    content: "Nice. If React feels unpredictable, it’s almost always a mutation problem.",
-    timestamp: new Date("2026-01-09T10:01:50"),
-  },
-  {
-    id: "10",
-    role: "assistant",
-    content: "Nice. If React feels unpredictable, it’s almost always a mutation problem.",
-    timestamp: new Date("2026-01-09T10:01:50"),
-  },
-  {
-    id: "10",
-    role: "assistant",
-    content: "Nice. If React feels unpredictable, it’s almost always a mutation problem.",
-    timestamp: new Date("2026-01-09T10:01:50"),
-  },
-  {
-    id: "10",
-    role: "assistant",
-    content: "Nice. If React feels unpredictable, it’s almost always a mutation problem.",
-    timestamp: new Date("2026-01-09T10:01:50"),
-  },
-  {
-    id: "10",
-    role: "assistant",
-    content: "Nice. If React feels unpredictable, it’s almost always a mutation problem.",
-    timestamp: new Date("2026-01-09T10:01:50"),
-  },
-  {
-    id: "10",
-    role: "assistant",
-    content: "Nice. If React feels unpredictable, it’s almost always a mutation problem.",
-    timestamp: new Date("2026-01-09T10:01:50"),
-  },
-]
-
 export default function SearchDocuments({
   organisationSlug,
   workspaceSlug,
@@ -120,71 +27,11 @@ export default function SearchDocuments({
   const [inputValue, setInputValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState<"simple" | "rag">("simple");
-  // const [messages, setMessages] = useState<Message[]>([]);
-  const [messages, setMessages] = useState<Message[]>([
-  {
-    id: "1",
-    role: "user",
-    content: "Hey, can you help me debug this React issue?",
-    timestamp: new Date("2026-01-09T10:00:00"),
-  },
-  {
-    id: "2",
-    role: "assistant",
-    content: "Sure. What’s the error you’re seeing and where does it happen?",
-    timestamp: new Date("2026-01-09T10:00:05"),
-  },
-  {
-    id: "3",
-    role: "user",
-    content: "State updates aren’t triggering a re-render.",
-    timestamp: new Date("2026-01-09T10:00:20"),
-  },
-  {
-    id: "4",
-    role: "assistant",
-    content: "Are you mutating state directly or using the setter properly?",
-    timestamp: new Date("2026-01-09T10:00:30"),
-  },
-  {
-    id: "5",
-    role: "user",
-    content: "I might be mutating an array before calling setState.",
-    timestamp: new Date("2026-01-09T10:00:45"),
-  },
-  {
-    id: "6",
-    role: "assistant",
-    content: "That’ll do it. React won’t detect changes if the reference stays the same.",
-    timestamp: new Date("2026-01-09T10:00:55"),
-  },
-  {
-    id: "7",
-    role: "user",
-    content: "So I should create a new array instead?",
-    timestamp: new Date("2026-01-09T10:01:10"),
-  },
-  {
-    id: "8",
-    role: "assistant",
-    content: "Exactly. Use spread, map, or filter to return a new array.",
-    timestamp: new Date("2026-01-09T10:01:20"),
-  },
-  {
-    id: "9",
-    role: "user",
-    content: "Got it. That fixed the issue.",
-    timestamp: new Date("2026-01-09T10:01:40"),
-  },
-  {
-    id: "10",
-    role: "assistant",
-    content: "Nice. If React feels unpredictable, it’s almost always a mutation problem.",
-    timestamp: new Date("2026-01-09T10:01:50"),
-  },
-]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const ragInputRef = useRef<HTMLInputElement>(null);
+  const prevIsLoadingRef = useRef(false);
 
   
   const searchOptions = useMemo(() => ({
@@ -198,7 +45,7 @@ export default function SearchDocuments({
         const assistantMessage: Message = {
           id: `assistant-${Date.now()}`,
           role: "assistant",
-          content: data[0]?.snippet || "I found some information for you.",
+          content: (typeof data[0]?.snippet === "string" && data[0].snippet) ? data[0].snippet : "I couldn't find a relevant answer in your documents.",
           timestamp: new Date(),
         };
         
@@ -224,6 +71,14 @@ export default function SearchDocuments({
     }
   }, [messages, isLoading]);
 
+  // Re-focus input when the AI finishes answering
+  useEffect(() => {
+    if (searchMode === "rag" && prevIsLoadingRef.current && !isLoading) {
+      ragInputRef.current?.focus();
+    }
+    prevIsLoadingRef.current = isLoading;
+  }, [isLoading, searchMode]);
+
 
   const handleSearch = () => {
     const normalizedQuery = inputValue.trim();
@@ -248,13 +103,6 @@ export default function SearchDocuments({
     setMessages([]);
     setSearchQuery("");
   };
-
-  const filteredResults = results.filter((result) => {
-    const title = result?.title?.toLowerCase() ?? "";
-    const snippet = result?.snippet?.toLowerCase() ?? "";
-    const normalizedQuery = searchQuery.toLowerCase();
-    return title.includes(normalizedQuery) || snippet.includes(normalizedQuery);
-  });
 
   return (
     <main className="flex-1 flex flex-col h-[calc(100vh-64px)] overflow-hidden bg-background">
@@ -327,7 +175,7 @@ export default function SearchDocuments({
                   placeholder="Search your documents…"
                 />
                 <SearchResults
-                  results={filteredResults}
+                  results={results}
                   searchQuery={searchQuery}
                   isLoading={isLoading}
                   hasSearched={searchQuery !== ""}
@@ -359,9 +207,18 @@ export default function SearchDocuments({
                         "Where can I find the latest marketing assets?",
                         "Summarize the Q4 strategy document."
                       ].map((hint) => (
-                        <button 
+                        <button
                           key={hint}
-                          onClick={() => { setInputValue(hint); handleSearch(); }}
+                          onClick={() => {
+                            const userMessage: Message = {
+                              id: `user-${Date.now()}`,
+                              role: "user",
+                              content: hint,
+                              timestamp: new Date(),
+                            };
+                            setMessages((prev) => [...prev, userMessage]);
+                            setSearchQuery(hint);
+                          }}
                           className="p-4 rounded-xl border border-border bg-card/50 hover:bg-card hover:border-primary/30 transition-all text-left text-sm group"
                         >
                           <span className="text-muted-foreground group-hover:text-foreground transition-colors">{hint}</span>
@@ -432,13 +289,13 @@ export default function SearchDocuments({
               <div className="relative group">
                 <div className="absolute -inset-1 bg-linear-to-r from-primary/20 to-primary/0 rounded-[22px] blur opacity-0 transition duration-500" />
                 <SearchInput
+                  ref={ragInputRef}
                   value={inputValue}
                   onChange={setInputValue}
                   onSubmit={handleSearch}
                   isLoading={isLoading}
                   autoFocus={true}
                   placeholder="Ask a question about your knowledge..."
-        
                 />
               </div>
               <p className="mt-3 text-center text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em]">
