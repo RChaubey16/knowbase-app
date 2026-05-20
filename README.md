@@ -1,130 +1,107 @@
-# 📚 KnowBase App
+# Knowbase App
 
-A modern, full-featured knowledge base application built with Next.js 16, designed to help you organize, search, and manage your documents efficiently.
+The frontend for Knowbase. A Next.js web application for organising, searching, and managing documents inside workspaces.
 
 > [!WARNING]
 > **This project is currently under active development.** Features and APIs may change without notice.
 
-## ✨ Features
+## Tech Stack
 
-- 🔍 **Semantic Search** - Powerful search functionality with relevance scoring
-- 📄 **Document Management** - Organize and manage documents with multiple view options (table/grid)
-- 🎨 **Modern UI** - Clean, responsive interface built with shadcn/ui components
-- 🌓 **Dark Mode** - Full dark/light theme support with system preference detection
-- 📱 **Responsive Design** - Optimized for desktop, tablet, and mobile devices
-- 🎯 **Type-Safe** - Built with TypeScript for enhanced developer experience
-- ⚡ **Fast Performance** - Leveraging Next.js 16 App Router and React 19
+| Technology | Role |
+|---|---|
+| **Next.js 16.1** | Framework — App Router, server components, server actions |
+| **React 19** | UI library |
+| **TypeScript** | Type safety |
+| **Tailwind CSS v4** | Styling |
+| **shadcn/ui** | UI component library (Radix UI primitives) |
+| **SWR** | Client-side data fetching and caching |
+| **Lucide React** | Icons |
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+ 
-- pnpm 10.7.0+ (recommended package manager)
+- Node.js 20+
+- pnpm 10.7.0+
+- The `knowbase-api` backend running on port 3000
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd knowbase-app
-```
-
-2. Install dependencies:
 ```bash
 pnpm install
 ```
 
-3. Run the development server:
-```bash
-pnpm dev
+### Environment Variables
+
+Create a `.env.local` file:
+
+```env
+API_BASE_URL=http://localhost:3000              # server-side only
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000  # exposed to the browser
+NEXT_PUBLIC_FE_URL=http://localhost:3001
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## 🛠️ Tech Stack
-
-### Core
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **React**: 19.2.3
-- **TypeScript**: 5.x
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-
-### UI Components
-- **Component Library**: [shadcn/ui](https://ui.shadcn.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Radix UI Primitives**: Accessible, unstyled components
-- **Theme Management**: next-themes
-
-### Development Tools
-- **Linting**: ESLint 9
-- **Package Manager**: pnpm
-
-## 📁 Project Structure
-
-```
-knowbase-app/
-├── app/                    # Next.js App Router pages
-│   ├── documents/         # Document management page
-│   ├── search/            # Search interface
-│   ├── login/             # Authentication (in development)
-│   ├── layout.tsx         # Root layout with theme provider
-│   └── globals.css        # Global styles and theme variables
-├── components/            # React components
-│   ├── documents/         # Document-related components
-│   ├── search/            # Search components
-│   ├── layout/            # Layout components (TopBar, etc.)
-│   ├── forms/             # Form components
-│   ├── cards/             # Card components
-│   ├── table/             # Table components
-│   ├── ui/                # shadcn/ui components
-│   └── theme-toggle.tsx   # Theme switcher component
-├── lib/                   # Utility functions
-├── types/                 # TypeScript type definitions
-└── public/                # Static assets
-```
-
-## 🎨 Design System
-
-The application uses a custom design system with:
-- **Typography**: Montserrat font family
-- **Color Palette**: Carefully crafted light and dark themes
-- **Components**: Consistent, reusable UI components from shadcn/ui
-- **Animations**: Smooth transitions and micro-interactions
-
-## 📝 Available Scripts
+### Running
 
 ```bash
-pnpm dev        # Start development server
-pnpm build      # Build for production
-pnpm start      # Start production server
-pnpm lint       # Run ESLint
+pnpm dev    # development server on http://localhost:3001 (webpack, not turbopack)
+pnpm build
+pnpm start
+pnpm lint
 ```
 
-## 🔮 Planned Features
+## Features
 
-- [ ] User authentication and authorization
-- [ ] Document upload and processing
-- [ ] Vector-based semantic search integration
-- [ ] Document chunking and embedding
-- [ ] Workspace management
-- [ ] Advanced filtering and sorting
-- [ ] Document tagging and categorization
-- [ ] Export functionality
-- [ ] API integration with backend services
+- **Google OAuth login** — cookie-based auth with automatic token refresh
+- **Multi-tenant** — Organisation → Workspace → Document hierarchy
+- **Document management** — Create, edit, soft-delete documents; table and card views
+- **Full-text search** — PostgreSQL-backed keyword search with relevance ranking
+- **RAG AI search** — Chat-style interface; queries are embedded and answered by Gemini using document context
+- **Background indexing status** — Documents in `"processing"` state poll every 4 seconds until `"ready"` or `"failed"`
+- **Dynamic pagination** — Document list pages driven by `totalPages`
+- **Role-based UI** — Owner-only actions (invite, delete) gated by workspace/org role
+- **Dark / light theme** — System preference detected; manually toggleable
 
-## 🤝 Contributing
+## Project Structure
 
-This project is currently in active development. Contribution guidelines will be added soon.
+```
+app/                          # Next.js App Router pages
+  login/                      # Google login page
+  organisation/
+    create/                   # Create org form
+    [slug]/                   # Org layout (sidebar) + org home
+      workspaces/
+        [workspaceSlug]/      # Workspace layout (top bar, breadcrumbs)
+          page.tsx            # Workspace home (placeholder — shows document list)
+          documents/          # Full document list
+          search/             # Search page (simple + RAG toggle)
+  actions/                    # Server Actions (create/update/delete documents)
 
-## 📄 License
+components/
+  layout/                     # Sidebar, top bar, breadcrumbs, workspace switcher
+  forms/                      # Document form, create org/workspace, invite members
+  modals/                     # Context + Provider wrappers for Dialog popups
+  search/                     # Search input, results, AI chat interface
+  documents/                  # Document list, action dropdown
+  table/                      # Document table view
+  cards/                      # Document, workspace, org cards
+  ui/                         # shadcn/ui primitives
 
-This project is private and proprietary.
+lib/
+  fetch/server.ts             # Fetch wrapper for server components (forwards cookies)
+  fetch/client.ts             # Fetch wrapper for client components (handles 401 refresh)
+  hooks/                      # SWR hooks: useDocuments, useSearch, useWorkspaces, etc.
 
-## 🔗 Related Projects
+types/                        # TypeScript interfaces (Document, Workspace, Organisation)
+```
 
-- [knowbase-api](https://github.com/RChaubey16/knowbase-api) - Backend API service (if applicable)
+## Known Gaps
 
----
+- `isIndexed` is not returned by document API responses — the AI search toggle in the edit form always shows unchecked
+- "Re-index" action for failed documents is wired in the dropdown but has no API endpoint yet
+- Workspace home page (`/page.tsx`) is a placeholder — renders the document list instead of a dashboard
+- No member list / remove UI — invite-only for now
 
-**Note**: This is a work-in-progress project. Features, documentation, and structure are subject to change as development continues.
+## License
+
+Private and proprietary.
