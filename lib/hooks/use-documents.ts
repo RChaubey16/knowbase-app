@@ -141,6 +141,29 @@ export function useDocuments(
     );
   };
 
+  const uploadPdfDocument = async (
+    file: File,
+    title: string,
+    isIndexed: boolean
+  ) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("title", title);
+    formData.append("isIndexed", String(isIndexed));
+
+    const doc = await clientFetch<Document>(
+      `/workspaces/${workspaceSlug}/documents/upload`,
+      {
+        method: "POST",
+        headers: { "X-Organisation": organisationSlug ?? "" },
+        body: formData,
+      }
+    );
+
+    await mutate([...(data ?? []), { ...doc, status: "processing" as DocumentStatus }]);
+    return doc;
+  };
+
   return {
     documents: data,
     isLoading,
@@ -149,6 +172,7 @@ export function useDocuments(
     updateDocument,
     deleteDocument,
     reindexDocument,
+    uploadPdfDocument,
     refresh: mutate,
   };
 }

@@ -42,12 +42,12 @@ export async function clientFetch<T>(
     );
   }
 
+  const isFormData = rest.body instanceof FormData;
+  const baseHeaders: Record<string, string> = isFormData ? {} : { "Content-Type": "application/json" };
+
   const res = await fetch(url.toString(), {
     ...rest,
-    headers: {
-      "Content-Type": "application/json",
-      ...(headers || {}),
-    },
+    headers: { ...baseHeaders, ...(headers || {}) },
     credentials: "include",
   });
 
@@ -58,10 +58,7 @@ export async function clientFetch<T>(
 
       const retryRes = await fetch(url.toString(), {
         ...rest,
-        headers: {
-          "Content-Type": "application/json",
-          ...(headers || {}),
-        },
+        headers: { ...baseHeaders, ...(headers || {}) },
         credentials: "include",
       });
 

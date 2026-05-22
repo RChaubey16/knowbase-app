@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,7 @@ export default function DocumentForm({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -74,7 +75,7 @@ export default function DocumentForm({
     setError(null);
   };
 
-  const { addDocument, updateDocument } = useDocuments(
+  const { addDocument, updateDocument, uploadPdfDocument } = useDocuments(
     workspace?.slug || "",
     workspace?.organisationId
   );
@@ -88,6 +89,11 @@ export default function DocumentForm({
     if (formData.type === "url") {
       if (!formData.url.trim()) {
         setError("A URL is required for webpage documents.");
+        return;
+      }
+    } else if (formData.type === "pdf") {
+      if (!fileInputRef.current?.files?.[0]) {
+        setError("Please select a PDF file.");
         return;
       }
     } else if (!formData.content.trim()) {
@@ -106,13 +112,16 @@ export default function DocumentForm({
 
     try {
       if (isEdit && document) {
-        const updatePayload = {
+        await updateDocument(document.id, {
           title: formData.title,
           content: formData.content,
           isIndexed: formData.isIndexed,
-        };
-        await updateDocument(document.id, updatePayload);
+        });
         toast.success("Document updated successfully");
+      } else if (formData.type === "pdf") {
+        const file = fileInputRef.current!.files![0];
+        await uploadPdfDocument(file, formData.title, formData.isIndexed);
+        toast.success("PDF uploaded successfully");
       } else {
         const payload: Record<string, string | number | boolean> =
           formData.type === "url"
@@ -174,6 +183,21 @@ export default function DocumentForm({
             />
             <p className="text-xs text-muted-foreground">
               The page content will be fetched and extracted automatically.
+            </p>
+          </div>
+        ) : formData.type === "pdf" ? (
+          <div className="space-y-2">
+            <Label htmlFor="pdf-file">PDF File</Label>
+            <Input
+              id="pdf-file"
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf"
+              required
+              className="cursor-pointer"
+            />
+            <p className="text-xs text-muted-foreground">
+              Text will be extracted automatically. Max 10 MB.
             </p>
           </div>
         ) : (
