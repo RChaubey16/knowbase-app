@@ -56,7 +56,7 @@ const DocumentsList = ({
   workspaceSlug: string;
   organisationSlug?: string;
 }) => {
-  const { documents: documentsList, deleteDocument } = useDocuments(
+  const { documents: documentsList, deleteDocument, reindexDocument } = useDocuments(
     workspaceSlug,
     organisationSlug,
     documents
@@ -119,6 +119,12 @@ const DocumentsList = ({
     } else if (action === "edit") {
       setSelectedDocument(doc);
       setIsEditModalOpen(true);
+    } else if (action === "reindex") {
+      toast.promise(reindexDocument(doc.id), {
+        loading: "Re-indexing document...",
+        success: `Re-indexing started for "${doc.title}"`,
+        error: (err) => `Failed to re-index: ${err.message || "Unknown error"}`,
+      });
     } else if (action === "delete") {
       toast.promise(deleteDocument(doc.id), {
         loading: "Deleting document...",

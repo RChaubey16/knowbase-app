@@ -174,7 +174,7 @@ export default function DocumentForm({
           </div>
           <Switch
             id="isIndexed"
-            checked={isEdit? false : formData.isIndexed}
+            checked={formData.isIndexed}
             onCheckedChange={(checked) =>
               setFormData((prev) => ({ ...prev, isIndexed: checked }))
             }

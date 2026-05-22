@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { clientFetch } from "@/lib/fetch/client";
-import { Document } from "@/types/document";
+import { Document, DocumentStatus } from "@/types/document";
 import {
   deleteDocumentAction,
   createDocumentAction,
@@ -117,6 +117,30 @@ export function useDocuments(
     );
   };
 
+  const reindexDocument = async (docId: string | number) => {
+    const optimisticData = data?.map((doc) =>
+      doc.id === docId
+        ? { ...doc, status: "processing" as DocumentStatus }
+        : doc
+    );
+
+    return mutate(
+      async () => {
+        await clientFetch(`/workspaces/${workspaceSlug}/documents/${docId}/reindex`, {
+          method: "POST",
+          headers: { "X-Organisation": organisationSlug ?? "" },
+        });
+        return optimisticData;
+      },
+      {
+        optimisticData,
+        rollbackOnError: true,
+        populateCache: true,
+        revalidate: true,
+      }
+    );
+  };
+
   return {
     documents: data,
     isLoading,
@@ -124,6 +148,7 @@ export function useDocuments(
     addDocument,
     updateDocument,
     deleteDocument,
+    reindexDocument,
     refresh: mutate,
   };
 }
