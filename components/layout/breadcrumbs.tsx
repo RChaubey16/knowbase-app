@@ -26,8 +26,9 @@ export function Breadcrumbs() {
       {paths.map((path, index) => {
         const href = `/${paths.slice(0, index + 1).join("/")}`;
         const isLast = index === paths.length - 1;
+        const cleanPath = path.replace(/-[a-zA-Z0-9]{8}$/, "");
         const label =
-          path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, " ");
+          cleanPath.charAt(0).toUpperCase() + cleanPath.slice(1).replace(/-/g, " ");
 
         // Skip intermediate routing segments if they are just identifiers like "organisation" or "workspaces"
         // But keep the actual slug values. This is a bit opinionated based on the URL structure.

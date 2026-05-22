@@ -1,6 +1,7 @@
 "use client";
 
-import { Plus, UserPlus } from "lucide-react";
+import { Plus, Settings, UserPlus } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -114,6 +115,13 @@ function TopBarContent({
               Add Document
             </Button>}
           </>
+        )}
+        {wsUserRole === "owner" && workspaceSlug && (
+          <Link href={`/organisation/${orgSlug}/workspaces/${workspaceSlug}/settings`}>
+            <Button variant="ghost" size="icon" aria-label="Workspace settings">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </Link>
         )}
         <ThemeToggle />
       </div>
