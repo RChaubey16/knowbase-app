@@ -8,6 +8,7 @@ export interface Document {
   snippet: string;
   content?: string;
   source: string;
+  sourceUrl?: string | null;
   type: string;
   status: DocumentStatus;
   isIndexed: boolean;

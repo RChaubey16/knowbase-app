@@ -56,19 +56,31 @@ const DocumentTable = ({
                   <span className="truncate">{doc.title}</span>
                 </div>
               </TableCell>
-              <TableCell>
-                <div className="text-sm text-muted-foreground line-clamp-2">
+              <TableCell className="max-w-0">
+                <p className="text-sm text-muted-foreground truncate overflow-hidden">
                   {doc.snippet}
-                </div>
+                </p>
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-1.5">
-                  {doc.source === "URL" ? (
-                    <Link2 className="w-3.5 h-3.5 text-muted-foreground" />
+                  {doc.type === "url" ? (
+                    <Link2 className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
                   ) : (
-                    <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+                    <FileText className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
                   )}
-                  <span className="text-sm">{doc.source}</span>
+                  {doc.type === "url" && doc.sourceUrl ? (
+                    <a
+                      href={doc.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm truncate max-w-[180px] hover:underline text-blue-600 dark:text-blue-400"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {new URL(doc.sourceUrl).hostname}
+                    </a>
+                  ) : (
+                    <span className="text-sm capitalize">{doc.type}</span>
+                  )}
                 </div>
               </TableCell>
               <TableCell>{getStatusBadge(doc.status)}</TableCell>

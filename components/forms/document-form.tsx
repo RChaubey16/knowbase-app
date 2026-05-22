@@ -56,6 +56,7 @@ export default function DocumentForm({
   const [formData, setFormData] = useState({
     title: document?.title || "",
     content: document?.content || "",
+    url: "",
     type: document?.type || "text",
     source: document?.source || "manual",
     isIndexed: document?.isIndexed ?? true,
@@ -84,7 +85,12 @@ export default function DocumentForm({
       setError("Title is required.");
       return;
     }
-    if (!formData.content.trim()) {
+    if (formData.type === "url") {
+      if (!formData.url.trim()) {
+        setError("A URL is required for webpage documents.");
+        return;
+      }
+    } else if (!formData.content.trim()) {
       setError("Content is required.");
       return;
     }
@@ -108,7 +114,11 @@ export default function DocumentForm({
         await updateDocument(document.id, updatePayload);
         toast.success("Document updated successfully");
       } else {
-        await addDocument(formData);
+        const payload: Record<string, string | number | boolean> =
+          formData.type === "url"
+            ? { title: formData.title, url: formData.url, type: formData.type, source: formData.source, isIndexed: formData.isIndexed }
+            : { title: formData.title, content: formData.content, type: formData.type, source: formData.source, isIndexed: formData.isIndexed };
+        await addDocument(payload);
         toast.success("Document added successfully");
       }
       onSuccess?.();
@@ -150,18 +160,36 @@ export default function DocumentForm({
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="content">Content</Label>
-          <Textarea
-            id="content"
-            name="content"
-            placeholder="Document content..."
-            value={formData.content}
-            onChange={handleChange}
-            required
-            rows={isEdit ? 10 : 5}
-          />
-        </div>
+        {formData.type === "url" ? (
+          <div className="space-y-2">
+            <Label htmlFor="url">URL</Label>
+            <Input
+              id="url"
+              name="url"
+              type="url"
+              placeholder="https://example.com/article"
+              value={formData.url}
+              onChange={handleChange}
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              The page content will be fetched and extracted automatically.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <Label htmlFor="content">Content</Label>
+            <Textarea
+              id="content"
+              name="content"
+              placeholder="Document content..."
+              value={formData.content}
+              onChange={handleChange}
+              required
+              rows={isEdit ? 10 : 5}
+            />
+          </div>
+        )}
 
         <div className="flex items-center justify-between rounded-lg border p-4 shadow-sm">
           <div className="space-y-0.5">

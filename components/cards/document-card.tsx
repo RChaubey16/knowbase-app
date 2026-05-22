@@ -61,12 +61,24 @@ const DocumentCard = ({
       <CardFooter className="pt-3 border-t border-border/40 flex justify-between items-center text-xs text-muted-foreground relative bg-muted/5 group-hover:bg-transparent transition-colors mt-auto">
         <div className="flex gap-3 items-center">
           <div className="flex items-center gap-1.5 font-medium">
-            {doc.source === "URL" ? (
-              <Link2 className="w-3.5 h-3.5" />
+            {doc.type === "url" ? (
+              <Link2 className="w-3.5 h-3.5 shrink-0" />
             ) : (
-              <FileText className="w-3.5 h-3.5" />
+              <FileText className="w-3.5 h-3.5 shrink-0" />
             )}
-            <span>{doc.source}</span>
+            {doc.type === "url" && doc.sourceUrl ? (
+              <a
+                href={doc.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="truncate max-w-[140px] hover:underline text-blue-600 dark:text-blue-400"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {new URL(doc.sourceUrl).hostname}
+              </a>
+            ) : (
+              <span className="capitalize">{doc.type}</span>
+            )}
           </div>
           <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
           <div className="flex items-center gap-1.5">

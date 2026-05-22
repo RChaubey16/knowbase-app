@@ -266,8 +266,8 @@ const DocumentsList = ({
       )}
 
       <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+          <DialogHeader className="shrink-0">
             <DialogTitle className="text-2xl font-bold">
               {selectedDocument?.title}
             </DialogTitle>
@@ -276,7 +276,7 @@ const DocumentsList = ({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="mt-4 prose dark:prose-invert max-w-none">
+          <div className="overflow-y-auto prose dark:prose-invert max-w-none pr-1">
             {selectedDocument?.content ? (
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {selectedDocument.content}
