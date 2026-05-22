@@ -26,6 +26,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
 import DocumentForm from "../forms/document-form";
@@ -276,9 +278,9 @@ const DocumentsList = ({
 
           <div className="mt-4 prose dark:prose-invert max-w-none">
             {selectedDocument?.content ? (
-              <div className="whitespace-pre-wrap leading-relaxed">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {selectedDocument.content}
-              </div>
+              </ReactMarkdown>
             ) : (
               <p className="text-muted-foreground italic">
                 No content available for this document.

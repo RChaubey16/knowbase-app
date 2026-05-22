@@ -1,6 +1,7 @@
-import DocumentsList from "@/components/documents/documents-list";
 import { serverFetch } from "@/lib/fetch/server";
 import { Document } from "@/types/document";
+import { WorkspaceFields } from "@/types/workspace";
+import { WorkspaceDashboard } from "@/components/workspace/workspace-dashboard";
 
 interface PageProps {
   params: Promise<{ slug: string; workspaceSlug: string }>;
@@ -9,15 +10,17 @@ interface PageProps {
 export default async function WorkspacePage({ params }: PageProps) {
   const { workspaceSlug, slug } = await params;
 
-  const documents = await serverFetch<Document[]>(
-    `/workspaces/${workspaceSlug}/documents`
-  );
+  const [documents, workspace] = await Promise.all([
+    serverFetch<Document[]>(`/workspaces/${workspaceSlug}/documents?limit=50`),
+    serverFetch<WorkspaceFields>(`/workspaces/${workspaceSlug}`),
+  ]);
 
   return (
-    <div className="space-y-6">
-      <main className="flex-1">
-        <DocumentsList documents={documents} workspaceSlug={workspaceSlug} organisationSlug={slug} />
-      </main>
-    </div>
+    <WorkspaceDashboard
+      documents={documents}
+      workspace={workspace}
+      organisationSlug={slug}
+      workspaceSlug={workspaceSlug}
+    />
   );
 }

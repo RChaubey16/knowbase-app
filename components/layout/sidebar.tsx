@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Search, Settings, Menu, X, UserPlus } from "lucide-react";
+import { FileText, Search, Menu, X, UserPlus } from "lucide-react";
 
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { OrganisationFields } from "@/types/organisation";
@@ -44,24 +44,18 @@ export function SidebarContent({
   const currentSection = segments.at(-1);
   const isUserOwner = orgUser.role === "owner";
 
-  const navItems = [
-    ...(pathname.includes("documents") || pathname.includes("search")
-      ? [
-          {
-            name: "Documents",
-            icon: FileText,
-          },
-        ]
-      : []),
-    ...(pathname.includes("search") || pathname.includes("documents")
-      ? [
-          {
-            name: "Search",
-            icon: Search,
-          },
-        ]
-      : []),
-  ];
+  const workspacesIdx = segments.indexOf("workspaces");
+  const isInWorkspace = workspacesIdx !== -1 && segments.length > workspacesIdx + 1;
+  const workspaceBase = isInWorkspace
+    ? "/" + segments.slice(0, workspacesIdx + 2).join("/")
+    : null;
+
+  const navItems = isInWorkspace
+    ? [
+        { name: "Documents", icon: FileText, href: `${workspaceBase}/documents` },
+        { name: "Search", icon: Search, href: `${workspaceBase}/search` },
+      ]
+    : [];
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
@@ -128,15 +122,12 @@ export function SidebarContent({
           {navItems.map((item) => {
             const Icon = item.icon;
             const section = item.name.toLowerCase();
-
-            const href = "/" + segments.slice(0, -1).concat(section).join("/");
-
             const isActive = currentSection === section;
 
             return (
               <Link
                 key={section}
-                href={href}
+                href={item.href}
                 onClick={closeMobileMenu}
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
