@@ -29,9 +29,10 @@ export default function InviteMembersForm({
   workspaceSlug?: string;
   onSuccess?: () => void;
 }) {
+  const isOrgInvite = !workspaceSlug;
   const [emails, setEmails] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [role, setRole] = useState("viewer");
+  const [role, setRole] = useState(isOrgInvite ? "member" : "viewer");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -95,12 +96,10 @@ export default function InviteMembersForm({
     }
 
     const payload: {
-      organisationSlug: string;
       emails: string[];
       role: string;
       workspaceSlug?: string;
     } = {
-      organisationSlug,
       emails: finalEmails,
       role,
       ...(workspaceSlug && { workspaceSlug }),
@@ -202,27 +201,29 @@ export default function InviteMembersForm({
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-[--radix-dropdown-menu-trigger-width]">
               <DropdownMenuRadioGroup value={role} onValueChange={setRole}>
-                <DropdownMenuRadioItem value="viewer" className="capitalize">
-                  Viewer
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="editor" className="capitalize">
-                  Editor
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="admin" className="capitalize">
-                  Admin
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="owner" className="capitalize">
-                  Owner
-                </DropdownMenuRadioItem>
+                {isOrgInvite ? (
+                  <>
+                    <DropdownMenuRadioItem value="member" className="capitalize">Member</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="admin" className="capitalize">Admin</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="owner" className="capitalize">Owner</DropdownMenuRadioItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuRadioItem value="viewer" className="capitalize">Viewer</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="editor" className="capitalize">Editor</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="admin" className="capitalize">Admin</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="owner" className="capitalize">Owner</DropdownMenuRadioItem>
+                  </>
+                )}
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
           <p className="text-xs text-muted-foreground mt-1 px-1">
+            {role === "member" && "Can access workspaces they are added to."}
             {role === "viewer" && "Can only view and comment on documents."}
             {role === "editor" && "Can view, edit, and create documents."}
-            {role === "admin" && "Can manage workspace settings and members."}
-            {role === "owner" &&
-              "Full access to all workspace features and settings."}
+            {role === "admin" && (isOrgInvite ? "Can manage organisation members." : "Can manage workspace settings and members.")}
+            {role === "owner" && "Full access to all features and settings."}
           </p>
         </div>
 

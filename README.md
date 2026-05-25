@@ -52,55 +52,64 @@ pnpm lint
 
 ## Features
 
-- **Google OAuth login** — cookie-based auth with automatic token refresh
-- **Multi-tenant** — Organisation → Workspace → Document hierarchy
-- **Document management** — Create, edit, soft-delete documents; table and card views
+- **Google OAuth login** — cookie-based auth with automatic token refresh and redirect on 401
+- **Multi-tenant** — Organisation → Workspace → Document hierarchy with role-based UI gating
+- **Document management** — Create (text, URL, PDF), edit, and soft-delete documents; table and card views with snippet previews
+- **Document types** — Text editor, URL ingestion (auto-scrapes page content), PDF upload (up to 10 MB)
 - **Full-text search** — PostgreSQL-backed keyword search with relevance ranking
-- **RAG AI search** — Chat-style interface; queries are embedded and answered by Gemini using document context
-- **Background indexing status** — Documents in `"processing"` state poll every 4 seconds until `"ready"` or `"failed"`
-- **Dynamic pagination** — Document list pages driven by `totalPages`
-- **Role-based UI** — Owner-only actions (invite, delete) gated by workspace/org role
+- **RAG AI search** — Semantic search powered by Jina AI embeddings and Gemini; results rendered as a generated answer
+- **Background indexing** — Processing documents poll every 4 seconds; failed documents can be re-indexed via dropdown action
+- **Member management** — Invite members by email; list, remove, and change roles for org and workspace members from the Settings page
+- **Organisation settings** — Rename org, manage members, delete org (owner only)
+- **Workspace settings** — Rename workspace, manage members, delete workspace (owner only)
+- **Workspace dashboard** — Stat cards (total / ready / processing / failed) and recent documents with quick actions
+- **Dynamic pagination** — Document list pages driven by `totalPages` from the API
+- **Markdown rendering** — Document content renders with `react-markdown` + `remark-gfm` (headings, tables, code blocks, etc.)
 - **Dark / light theme** — System preference detected; manually toggleable
 
 ## Project Structure
 
 ```
-app/                          # Next.js App Router pages
-  login/                      # Google login page
+app/
+  login/                        # Google login page
   organisation/
-    create/                   # Create org form
-    [slug]/                   # Org layout (sidebar) + org home
+    create/                     # Create org form
+    [slug]/                     # Org layout (sidebar, org role)
+      page.tsx                  # Org home — lists workspaces
+      settings/                 # Org settings: rename, members, delete (owner only)
       workspaces/
-        [workspaceSlug]/      # Workspace layout (top bar, breadcrumbs)
-          page.tsx            # Workspace home (placeholder — shows document list)
-          documents/          # Full document list
-          search/             # Search page (simple + RAG toggle)
-  actions/                    # Server Actions (create/update/delete documents)
+        [workspaceSlug]/        # Workspace layout (top bar, breadcrumbs)
+          page.tsx              # Workspace dashboard (stats + recent docs)
+          documents/            # Full document list with pagination
+          search/               # Search page (simple FTS + RAG toggle)
+          settings/             # Workspace settings: rename, members, delete (owner only)
+  actions/                      # Server Actions (create/update/delete documents, set org cookie)
 
 components/
-  layout/                     # Sidebar, top bar, breadcrumbs, workspace switcher
-  forms/                      # Document form, create org/workspace, invite members
-  modals/                     # Context + Provider wrappers for Dialog popups
-  search/                     # Search input, results, AI chat interface
-  documents/                  # Document list, action dropdown
-  table/                      # Document table view
-  cards/                      # Document, workspace, org cards
-  ui/                         # shadcn/ui primitives
+  layout/                       # Sidebar, top bar, breadcrumbs, workspace switcher
+  forms/                        # Document form (text/URL/PDF), create org/workspace, invite members
+  modals/                       # Context + Provider wrappers for Dialog popups
+  search/                       # Search input, results, AI chat interface
+  documents/                    # Document list, action dropdown
+  workspace/                    # Workspace dashboard
+  settings/                     # Org/workspace settings forms + members sections
+  table/                        # Document table view
+  cards/                        # Document, workspace, org cards
+  ui/                           # shadcn/ui primitives
 
 lib/
-  fetch/server.ts             # Fetch wrapper for server components (forwards cookies)
-  fetch/client.ts             # Fetch wrapper for client components (handles 401 refresh)
-  hooks/                      # SWR hooks: useDocuments, useSearch, useWorkspaces, etc.
+  fetch/server.ts               # Fetch wrapper for server components (forwards cookies + X-Organisation)
+  fetch/client.ts               # Fetch wrapper for client components (handles 401 → refresh → retry)
+  hooks/
+    use-documents.ts            # CRUD + reindex + PDF upload; auto-polls processing docs
+    use-search.ts               # Debounced search with mode toggle
+    use-workspaces.ts           # Workspace CRUD
+    use-organisations.ts        # Org CRUD
+    use-org-members.ts          # Org member list, remove, role change
+    use-workspace-members.ts    # Workspace member list, remove
 
-types/                        # TypeScript interfaces (Document, Workspace, Organisation)
+types/                          # TypeScript interfaces (Document, Workspace, Organisation, Member)
 ```
-
-## Known Gaps
-
-- `isIndexed` is not returned by document API responses — the AI search toggle in the edit form always shows unchecked
-- "Re-index" action for failed documents is wired in the dropdown but has no API endpoint yet
-- Workspace home page (`/page.tsx`) is a placeholder — renders the document list instead of a dashboard
-- No member list / remove UI — invite-only for now
 
 ## License
 
