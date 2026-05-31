@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
 
 const API_BASE_URL = process.env.API_BASE_URL!;
@@ -28,10 +28,8 @@ export async function serverFetch<T>(
     }
   }
 
-  const allCookies = cookieStore.getAll();
-  console.log("[serverFetch]", url.toString(), "cookies:", allCookies.map((c) => c.name));
-
-  const cookieHeader = allCookies
+  const cookieHeader = cookieStore
+    .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
@@ -48,7 +46,11 @@ export async function serverFetch<T>(
   });
 
   if (res.status === 401) {
-    redirect("/login");
+    const headersList = await nextHeaders();
+    const currentPath = headersList.get("x-current-path") || "/";
+    redirect(
+      `/api/auth/refresh-session?redirectTo=${encodeURIComponent(currentPath)}`
+    );
   }
 
   // 🔑 handle 204
