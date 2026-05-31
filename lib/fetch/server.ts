@@ -28,8 +28,10 @@ export async function serverFetch<T>(
     }
   }
 
-  const cookieHeader = cookieStore
-    .getAll()
+  const allCookies = cookieStore.getAll();
+  console.log("[serverFetch]", url.toString(), "cookies:", allCookies.map((c) => c.name));
+
+  const cookieHeader = allCookies
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
