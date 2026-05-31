@@ -16,8 +16,7 @@ export default async function OrganisationLayout({
   const { slug } = await params;
 
   const organisations = await serverFetch<OrganisationFields[]>(
-    "/organisations",
-    { next: { revalidate: 300 } }
+    "/organisations"
   );
 
   const currOrganisation = organisations.find((org) => org.slug === slug);
