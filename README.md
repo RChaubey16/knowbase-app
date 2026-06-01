@@ -2,6 +2,14 @@
 
 The frontend for Knowbase. A Next.js web application for organising, searching, and managing documents inside workspaces.
 
+![Next.js](https://img.shields.io/badge/Next.js-16.1-black?style=flat-square&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-black?style=flat-square&logo=shadcnui&logoColor=white)
+![SWR](https://img.shields.io/badge/SWR-2-black?style=flat-square&logo=vercel&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-10.7-F69220?style=flat-square&logo=pnpm&logoColor=white)
+
 > [!WARNING]
 > **This project is currently under active development.** Features and APIs may change without notice.
 
