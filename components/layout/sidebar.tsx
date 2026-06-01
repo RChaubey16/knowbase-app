@@ -142,7 +142,7 @@ export function SidebarContent({
             );
           })}
 
-          {isUserOwner && (
+          {/* {isUserOwner && (
             <Button
               variant="outline"
               className="w-fit word-wrap button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
@@ -152,7 +152,7 @@ export function SidebarContent({
               <UserPlus className="h-4 w-4 stroke-2" />
               Invite to {currOrganisation.name}
             </Button>
-          )}
+          )} */}
         </nav>
 
         {isUserOwner && (

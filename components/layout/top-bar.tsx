@@ -93,7 +93,7 @@ function TopBarContent({
               </Badge>
             </div> */}
 
-            {wsUserRole === "owner" && (
+            {/* {wsUserRole === "owner" && (
               <Button
                 variant="outline"
                 className="button bg-transparent border-primary/20 hover:bg-primary/5 text-foreground"
@@ -103,7 +103,7 @@ function TopBarContent({
                 <UserPlus className="h-4 w-4 stroke-2" />
                 Invite members to Workspace
               </Button>
-            )}
+            )} */}
             
             {wsUserRole !== "viewer" && 
 
