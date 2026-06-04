@@ -15,6 +15,24 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "KnowBase - Your Modern Knowledge Base",
   description: "Organize, search, and manage your documents with ease.",
+  openGraph: {
+    title: "KnowBase - Your Modern Knowledge Base",
+    description: "Organize, search, and manage your documents with ease.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1320,
+        height: 880,
+        alt: "KnowBase",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KnowBase - Your Modern Knowledge Base",
+    description: "Organize, search, and manage your documents with ease.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
