@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Building2, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { OrganisationFields } from "@/types/organisation";
 
@@ -21,13 +22,28 @@ const OrganisationCard = ({ organisation }: OrganisationCardProps) => {
       onClick={() => router.push(`/organisation/${organisation.slug}`)}
     >
       <CardHeader className="pb-4 relative">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 group-hover:border-primary/40 transition-colors">
-            <Building2 className="w-5 h-5 text-primary" />
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 group-hover:border-primary/40 transition-colors">
+              <Building2 className="w-5 h-5 text-primary" />
+            </div>
+            <h3 className="font-bold text-lg tracking-tight group-hover:text-primary transition-colors">
+              {organisation.name}
+            </h3>
           </div>
-          <h3 className="font-bold text-lg tracking-tight group-hover:text-primary transition-colors">
-            {organisation.name}
-          </h3>
+          {organisation.role && (
+            <Badge
+              variant="outline"
+              className={cn(
+                "capitalize text-[11px] font-semibold tracking-wide shrink-0",
+                organisation.role === "owner" && "bg-primary/10 text-primary border-primary/20",
+                organisation.role === "admin" && "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
+                organisation.role === "member" && "bg-muted text-muted-foreground border-border"
+              )}
+            >
+              {organisation.role}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       

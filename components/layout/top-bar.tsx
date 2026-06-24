@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "../theme-toggle";
@@ -25,6 +26,24 @@ interface TopBarProps {
   orgSlug: string;
   workspaceSlug?: string;
   wsUserRole: string;
+}
+
+const ROLE_BADGE_STYLES: Record<string, string> = {
+  owner: "bg-primary/10 text-primary border-primary/20",
+  admin: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
+  editor: "bg-muted text-muted-foreground border-border",
+  viewer: "bg-muted text-muted-foreground border-border",
+};
+
+function RoleBadge({ role }: { role: string }) {
+  return (
+    <Badge
+      variant="outline"
+      className={`capitalize text-[11px] font-semibold tracking-wide ${ROLE_BADGE_STYLES[role] ?? ROLE_BADGE_STYLES.viewer}`}
+    >
+      {role}
+    </Badge>
+  );
 }
 
 export function TopBar(props: TopBarProps) {
@@ -69,6 +88,7 @@ function TopBarContent({
               selectedSpace={selectedWorkspace}
               userRole={wsUserRole}
             />
+            <RoleBadge role={wsUserRole} />
           </>
         )}
         <Separator orientation="vertical" className="h-6" />
