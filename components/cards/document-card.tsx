@@ -1,4 +1,4 @@
-import { FileText, Link2, Clock } from "lucide-react";
+import { FileText, FileType, Link2, Clock } from "lucide-react";
 
 import {
   Card,
@@ -63,6 +63,8 @@ const DocumentCard = ({
           <div className="flex items-center gap-1.5 font-medium">
             {doc.type === "url" ? (
               <Link2 className="w-3.5 h-3.5 shrink-0" />
+            ) : doc.type === "pdf" ? (
+              <FileType className="w-3.5 h-3.5 shrink-0" />
             ) : (
               <FileText className="w-3.5 h-3.5 shrink-0" />
             )}

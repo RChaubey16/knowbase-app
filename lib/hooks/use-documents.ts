@@ -117,6 +117,12 @@ export function useDocuments(
     );
   };
 
+  const fetchDocument = async (docId: string | number): Promise<Document> => {
+    return clientFetch<Document>(`/workspaces/${workspaceSlug}/documents/${docId}`, {
+      headers: { "X-Organisation": organisationSlug ?? "" },
+    });
+  };
+
   const reindexDocument = async (docId: string | number) => {
     const optimisticData = data?.map((doc) =>
       doc.id === docId
@@ -171,6 +177,7 @@ export function useDocuments(
     addDocument,
     updateDocument,
     deleteDocument,
+    fetchDocument,
     reindexDocument,
     uploadPdfDocument,
     refresh: mutate,

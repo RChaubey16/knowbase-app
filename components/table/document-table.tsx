@@ -1,4 +1,4 @@
-import { FileText, Link2, Clock } from "lucide-react";
+import { FileText, FileType, Link2, Clock } from "lucide-react";
 
 import {
   Table,
@@ -65,6 +65,8 @@ const DocumentTable = ({
                 <div className="flex items-center gap-1.5">
                   {doc.type === "url" ? (
                     <Link2 className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+                  ) : doc.type === "pdf" ? (
+                    <FileType className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
                   ) : (
                     <FileText className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
                   )}

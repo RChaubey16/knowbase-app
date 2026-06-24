@@ -7,6 +7,8 @@ import {
   RefreshCw,
   LayoutGrid,
   LayoutList,
+  Loader2,
+  Link2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -96,7 +98,7 @@ const DocumentsList = ({
   workspaceSlug: string;
   organisationSlug?: string;
 }) => {
-  const { documents: documentsList, deleteDocument, reindexDocument } = useDocuments(
+  const { documents: documentsList, deleteDocument, reindexDocument, fetchDocument } = useDocuments(
     workspaceSlug,
     organisationSlug,
     documents
@@ -104,9 +106,9 @@ const DocumentsList = ({
   const [viewMode, setViewMode] = useState<string>("table");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(
-    null
-  );
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [viewContent, setViewContent] = useState<string | null>(null);
+  const [isViewLoading, setIsViewLoading] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -120,7 +122,13 @@ const DocumentsList = ({
   const handleAction = async (action: ActionType, doc: Document) => {
     if (action === "view") {
       setSelectedDocument(doc);
+      setViewContent(null);
+      setIsViewLoading(true);
       setIsViewModalOpen(true);
+      fetchDocument(doc.id)
+        .then((full) => setViewContent(full.content ?? null))
+        .catch(() => setViewContent(null))
+        .finally(() => setIsViewLoading(false));
     } else if (action === "edit") {
       setSelectedDocument(doc);
       setIsEditModalOpen(true);
@@ -265,15 +273,32 @@ const DocumentsList = ({
             <DialogTitle className="text-2xl font-bold">
               {selectedDocument?.title}
             </DialogTitle>
-            <DialogDescription>
-              Last updated: {timeAgo(selectedDocument?.updatedAt || "")}
+            <DialogDescription asChild>
+              <div className="flex flex-col gap-1 mt-1">
+                <span>Last updated: {timeAgo(selectedDocument?.updatedAt || "")}</span>
+                {selectedDocument?.type === "url" && selectedDocument.sourceUrl && (
+                  <a
+                    href={selectedDocument.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:underline w-fit"
+                  >
+                    <Link2 className="w-3.5 h-3.5" />
+                    {selectedDocument.sourceUrl}
+                  </a>
+                )}
+              </div>
             </DialogDescription>
           </DialogHeader>
 
           <div className="overflow-y-auto prose dark:prose-invert max-w-none pr-1">
-            {selectedDocument?.content ? (
+            {isViewLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : viewContent ? (
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {selectedDocument.content}
+                {viewContent}
               </ReactMarkdown>
             ) : (
               <p className="text-muted-foreground italic">
