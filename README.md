@@ -10,9 +10,6 @@ The frontend for Knowbase. A Next.js web application for organising, searching, 
 ![SWR](https://img.shields.io/badge/SWR-2-black?style=flat-square&logo=vercel&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-10.7-F69220?style=flat-square&logo=pnpm&logoColor=white)
 
-> [!WARNING]
-> **This project is currently under active development.** Features and APIs may change without notice.
-
 ## Tech Stack
 
 | Technology | Role |
@@ -105,8 +102,6 @@ types/                        # TypeScript interfaces (Document, Workspace, Orga
 
 ## Known Gaps
 
-- `isIndexed` is not returned by document API responses — the AI search toggle in the edit form always shows unchecked
-- "Re-index" action for failed documents is wired in the dropdown but has no API endpoint yet
 - Workspace home page (`/page.tsx`) is a placeholder — renders the document list instead of a dashboard
 - No member list / remove UI — invite-only for now
 
