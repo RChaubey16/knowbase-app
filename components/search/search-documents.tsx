@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const RAG_HINTS = [
-  "What is the company's remote work policy?",
-  "How do I set up my developer environment?",
-  "Where can I find the latest marketing assets?",
-  "Summarize the Q4 strategy document.",
+  "Summarize the key points from my documents.",
+  "What are the main topics covered in this workspace?",
+  "Give me an overview of what's stored here.",
+  "What should I know before getting started?",
 ];
 
 interface Message {
