@@ -176,7 +176,7 @@ export function WorkspaceSwitcher({
               setSelectedWorkspace(workspace);
               if (buttonText === "workspace") {
                 router.push(
-                  `/organisation/${orgSlug}/workspaces/${workspace.slug}/documents`
+                  `/organisation/${orgSlug}/workspaces/${workspace.slug}`
                 );
               } else {
                 router.push(`/organisation/${workspace.slug}`);
