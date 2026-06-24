@@ -22,36 +22,18 @@ interface DocumentFormProps {
   onSuccess?: () => void;
 }
 
+const DOCUMENT_OPTIONS = [
+  { id: "text", label: "Document", type: "text", source: "manual", icon: FileText },
+  { id: "url", label: "Webpage", type: "url", source: "url", icon: Globe },
+  { id: "pdf", label: "PDF", type: "pdf", source: "pdf", icon: FileType },
+];
+
 export default function DocumentForm({
   workspace,
   document,
   onSuccess,
 }: DocumentFormProps) {
   const isEdit = !!document;
-
-  const DOCUMENT_OPTIONS = [
-    {
-      id: "text",
-      label: "Document",
-      type: "text",
-      source: "manual",
-      icon: FileText,
-    },
-    {
-      id: "url",
-      label: "Webpage",
-      type: "url",
-      source: "url",
-      icon: Globe,
-    },
-    {
-      id: "pdf",
-      label: "PDF",
-      type: "pdf",
-      source: "pdf",
-      icon: FileType,
-    },
-  ];
 
   const [formData, setFormData] = useState({
     title: document?.title || "",

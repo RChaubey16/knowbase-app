@@ -13,16 +13,15 @@ export default async function WorkspaceLayout({
 }) {
   const { slug, workspaceSlug } = await params;
 
-  const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
-    headers: {
-      "X-Organisation": slug,
-    },
-  });
+  const [workspaces, wsUser] = await Promise.all([
+    serverFetch<WorkspaceFields[]>("/workspaces", {
+      headers: { "X-Organisation": slug },
+    }),
+    serverFetch<{ workspace_members: { role: string } }>(
+      `/workspaces/${workspaceSlug}/me`
+    ),
+  ]);
   const noWorkspaces = workspaces.length === 0;
-
-  const wsUser = await serverFetch<{ workspace_members: { role: string } }>(
-    `/workspaces/${workspaceSlug}/me`
-  );
 
   return (
     <>

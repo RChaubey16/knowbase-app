@@ -10,6 +10,13 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
+const RAG_HINTS = [
+  "What is the company's remote work policy?",
+  "How do I set up my developer environment?",
+  "Where can I find the latest marketing assets?",
+  "Summarize the Q4 strategy document.",
+];
+
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -201,12 +208,7 @@ export default function SearchDocuments({
                       </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl w-full">
-                      {[
-                        "What is the company's remote work policy?",
-                        "How do I set up my developer environment?",
-                        "Where can I find the latest marketing assets?",
-                        "Summarize the Q4 strategy document."
-                      ].map((hint) => (
+                      {RAG_HINTS.map((hint) => (
                         <button
                           key={hint}
                           onClick={() => {

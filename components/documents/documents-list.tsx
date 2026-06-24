@@ -26,7 +26,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import ReactMarkdown from "react-markdown";
+import dynamic from "next/dynamic";
 import remarkGfm from "remark-gfm";
 import DocumentCard from "../cards/document-card";
 import DocumentTable from "../table/document-table";
@@ -36,6 +36,44 @@ import { timeAgo } from "@/lib/utils";
 import { toast } from "sonner";
 import { EmptyState } from "../ui/empty-state";
 import { useDocuments } from "@/lib/hooks/use-documents";
+
+const ReactMarkdown = dynamic(() => import("react-markdown"), { ssr: false });
+
+function getStatusIcon(status: DocumentStatus) {
+  switch (status) {
+    case "ready":
+      return <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-500" />;
+    case "processing":
+      return <RefreshCw className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-spin" />;
+    case "failed":
+      return <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-500" />;
+    default:
+      return null;
+  }
+}
+
+const STATUS_BADGE_VARIANTS: Record<DocumentStatus, "default" | "secondary" | "destructive"> = {
+  ready: "default",
+  processing: "secondary",
+  failed: "destructive",
+};
+
+function getStatusBadge(status: DocumentStatus) {
+  return (
+    <Badge variant={STATUS_BADGE_VARIANTS[status]} className="capitalize">
+      {status}
+    </Badge>
+  );
+}
+
+function getRowClassName(status: DocumentStatus) {
+  const base = "cursor-pointer transition-colors";
+  if (status === "failed")
+    return `${base} bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/30`;
+  if (status === "processing")
+    return `${base} bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/20 dark:hover:bg-blue-950/30`;
+  return `${base} hover:bg-muted/50`;
+}
 
 function getPageNumbers(current: number, total: number): (number | "ellipsis")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
@@ -79,41 +117,6 @@ const DocumentsList = ({
     currentPage * itemsPerPage
   );
 
-  const getStatusIcon = (status: DocumentStatus) => {
-    switch (status) {
-      case "ready":
-        return (
-          <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-500" />
-        );
-      case "processing":
-        return (
-          <RefreshCw className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-spin" />
-        );
-      case "failed":
-        return (
-          <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-500" />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const getStatusBadge = (status: DocumentStatus) => {
-    const variants: Record<
-      DocumentStatus,
-      "default" | "secondary" | "destructive"
-    > = {
-      ready: "default",
-      processing: "secondary",
-      failed: "destructive",
-    };
-    return (
-      <Badge variant={variants[status]} className="capitalize">
-        {status}
-      </Badge>
-    );
-  };
-
   const handleAction = async (action: ActionType, doc: Document) => {
     if (action === "view") {
       setSelectedDocument(doc);
@@ -134,15 +137,6 @@ const DocumentsList = ({
         error: (err) => `Failed to delete: ${err.message || "Unknown error"}`,
       });
     }
-  };
-
-  const getRowClassName = (status: DocumentStatus) => {
-    const base = "cursor-pointer transition-colors";
-    if (status === "failed")
-      return `${base} bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/30`;
-    if (status === "processing")
-      return `${base} bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/20 dark:hover:bg-blue-950/30`;
-    return `${base} hover:bg-muted/50`;
   };
 
   if (!documentsList || documentsList.length === 0) {

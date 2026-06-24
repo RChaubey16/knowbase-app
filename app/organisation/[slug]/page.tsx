@@ -15,19 +15,16 @@ type PageProps = {
 export default async function OrganisationHomePage({ params }: PageProps) {
   const { slug } = await params;
 
-  const currentOrganisation = await serverFetch<OrganisationFields>(
-    `/organisations/${slug}`
-  );
+  const [currentOrganisation, workspaces] = await Promise.all([
+    serverFetch<OrganisationFields>(`/organisations/${slug}`),
+    serverFetch<WorkspaceFields[]>("/workspaces", {
+      headers: { "X-Organisation": slug },
+    }),
+  ]);
 
   if (!currentOrganisation) {
     notFound();
   }
-
-  const workspaces = await serverFetch<WorkspaceFields[]>("/workspaces", {
-    headers: {
-      "X-Organisation": slug,
-    },
-  });
 
   const noWorkspaces = workspaces.length === 0;
 

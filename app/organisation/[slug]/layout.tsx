@@ -15,19 +15,18 @@ export default async function OrganisationLayout({
 }) {
   const { slug } = await params;
 
-  const organisations = await serverFetch<OrganisationFields[]>(
-    "/organisations"
-  );
+  const [organisations, orgUser] = await Promise.all([
+    serverFetch<OrganisationFields[]>("/organisations"),
+    serverFetch<{ organisation_members: { role: string } }>(
+      `/organisations/${slug}/me`
+    ),
+  ]);
 
   const currOrganisation = organisations.find((org) => org.slug === slug);
 
   if (!currOrganisation) {
     notFound();
   }
-
-  const orgUser = await serverFetch<{ organisation_members: { role: string } }>(
-    `/organisations/${slug}/me`
-  );
 
   return (
     <div className="flex min-h-screen">

@@ -2,6 +2,8 @@ import useSWR, { SWRConfiguration } from "swr";
 import { clientFetch } from "@/lib/fetch/client";
 import { SearchResult } from "@/types/search-result";
 
+const EMPTY_RESULTS: SearchResult[] = [];
+
 export function useSearch(
   workspaceSlug: string,
   organisationSlug: string,
@@ -33,7 +35,7 @@ export function useSearch(
   );
 
   return {
-    results: data || [],
+    results: data ?? EMPTY_RESULTS,
     isLoading,
     isError: error,
     mutate,
