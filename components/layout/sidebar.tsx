@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { FileText, Search, Menu, X, UserPlus, Settings } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { FileText, Search, Menu, X, UserPlus, Settings, LogOut } from "lucide-react";
 
 import { WorkspaceSwitcher } from "./workspace-switcher";
 import { OrganisationFields } from "@/types/organisation";
@@ -12,6 +12,14 @@ import {
   useInviteMembersModal,
 } from "../modals/invite-members-modal";
 import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { clientFetch } from "@/lib/fetch/client";
 
 // Utility function for className merging
 const cn = (...classes: string[]) => classes.filter(Boolean).join(" ");
@@ -21,6 +29,10 @@ interface SidebarProps {
   currOrganisation: OrganisationFields;
   orgUser: {
     role: string;
+  };
+  user: {
+    userId: string;
+    email: string;
   };
 }
 
@@ -36,13 +48,23 @@ export function SidebarContent({
   organisations,
   currOrganisation,
   orgUser,
+  user,
 }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { open: openInvite } = useInviteMembersModal();
   const segments = pathname.split("/").filter(Boolean);
   const currentSection = segments.at(-1);
   const isUserOwner = orgUser.role === "owner";
+
+  const handleLogout = async () => {
+    try {
+      await clientFetch("/auth/logout", { method: "POST" });
+    } finally {
+      router.push("/login");
+    }
+  };
 
   const workspacesIdx = segments.indexOf("workspaces");
   const isInWorkspace = workspacesIdx !== -1 && segments.length > workspacesIdx + 1;
@@ -172,6 +194,35 @@ export function SidebarContent({
             </Link>
           </div>
         )}
+
+        {/* User footer */}
+        <div className="border-t border-sidebar-border px-3 py-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground uppercase">
+                  {user.email[0]}
+                </div>
+                <span className="flex-1 truncate text-left text-sidebar-foreground">
+                  {user.email}
+                </span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="start" className="w-56">
+              <div className="px-2 py-1.5">
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive cursor-pointer"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </aside>
     </>
   );

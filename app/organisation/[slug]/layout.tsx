@@ -15,11 +15,12 @@ export default async function OrganisationLayout({
 }) {
   const { slug } = await params;
 
-  const [organisations, orgUser] = await Promise.all([
+  const [organisations, orgUser, user] = await Promise.all([
     serverFetch<OrganisationFields[]>("/organisations"),
     serverFetch<{ organisation_members: { role: string } }>(
       `/organisations/${slug}/me`
     ),
+    serverFetch<{ userId: string; email: string }>("/auth/me"),
   ]);
 
   const currOrganisation = organisations.find((org) => org.slug === slug);
@@ -35,6 +36,7 @@ export default async function OrganisationLayout({
         organisations={organisations}
         currOrganisation={currOrganisation}
         orgUser={orgUser.organisation_members}
+        user={user}
       />
       <div className="flex flex-1 flex-col">{children}</div>
     </div>

@@ -4,12 +4,13 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import OrganisationCard from "@/components/cards/organisation-card";
+import { UserMenu } from "@/components/layout/user-menu";
 
 import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
 
 export default async function Home() {
-  const data: { userId: string } = await serverFetch("/auth/me");
+  const data: { userId: string; email: string } = await serverFetch("/auth/me");
 
   let organisations: OrganisationFields[] = [];
 
@@ -19,7 +20,8 @@ export default async function Home() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background font-sans">
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        {data?.email && <UserMenu email={data.email} />}
         <ThemeToggle />
       </div>
 
