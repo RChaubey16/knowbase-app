@@ -18,6 +18,7 @@ interface DocumentTableProps {
   getStatusIcon: (status: DocumentStatus) => React.ReactNode;
   getStatusBadge: (status: DocumentStatus) => React.ReactNode;
   getRowClassName: (status: DocumentStatus) => string;
+  isDemo?: boolean;
 }
 
 const DocumentTable = ({
@@ -26,6 +27,7 @@ const DocumentTable = ({
   getStatusIcon,
   getStatusBadge,
   getRowClassName,
+  isDemo = false,
 }: DocumentTableProps) => {
   return (
     <>
@@ -96,6 +98,7 @@ const DocumentTable = ({
                 <DocumentActionsDropdown
                   doc={doc}
                   handleAction={handleAction}
+                  isDemo={isDemo}
                 />
               </TableCell>
             </TableRow>

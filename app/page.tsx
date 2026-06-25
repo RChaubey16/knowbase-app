@@ -10,7 +10,7 @@ import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
 
 export default async function Home() {
-  const data: { userId: string; email: string } = await serverFetch("/auth/me");
+  const data: { userId: string; email: string; isDemo?: boolean } = await serverFetch("/auth/me");
 
   let organisations: OrganisationFields[] = [];
 
@@ -37,15 +37,17 @@ export default async function Home() {
               </p>
             </div>
 
-            <Link href="/organisation/create">
-              <Button
-                size="lg"
-                className="rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer"
-              >
-                <Plus className="mr-2 h-5 w-5" />
-                Create Organisation
-              </Button>
-            </Link>
+            {!data?.isDemo && (
+              <Link href="/organisation/create">
+                <Button
+                  size="lg"
+                  className="rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer"
+                >
+                  <Plus className="mr-2 h-5 w-5" />
+                  Create Organisation
+                </Button>
+              </Link>
+            )}
           </div>
 
           {!data || !data.userId ? (

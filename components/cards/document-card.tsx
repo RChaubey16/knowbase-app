@@ -15,6 +15,7 @@ interface DocumentCardProps {
   handleAction: (action: ActionType, doc: Document) => void;
   getStatusIcon: (status: DocumentStatus) => React.ReactNode;
   getStatusBadge: (status: DocumentStatus) => React.ReactNode;
+  isDemo?: boolean;
 }
 
 const DocumentCard = ({
@@ -22,6 +23,7 @@ const DocumentCard = ({
   handleAction,
   getStatusIcon,
   getStatusBadge,
+  isDemo = false,
 }: DocumentCardProps) => {
   return (
     <Card
@@ -48,7 +50,7 @@ const DocumentCard = ({
               {doc.title}
             </h3>
           </div>
-          <DocumentActionsDropdown doc={doc} handleAction={handleAction} />
+          <DocumentActionsDropdown doc={doc} handleAction={handleAction} isDemo={isDemo} />
         </div>
       </CardHeader>
 

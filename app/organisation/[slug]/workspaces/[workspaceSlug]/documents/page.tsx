@@ -9,14 +9,20 @@ interface PageProps {
 export default async function WorkspaceDocumentsPage({ params }: PageProps) {
   const { workspaceSlug, slug } = await params;
 
-  const documents = await serverFetch<Document[]>(
-    `/workspaces/${workspaceSlug}/documents`
-  );
+  const [documents, user] = await Promise.all([
+    serverFetch<Document[]>(`/workspaces/${workspaceSlug}/documents`),
+    serverFetch<{ isDemo: boolean }>("/auth/me"),
+  ]);
 
   return (
     <div className="space-y-6">
       <main className="flex-1">
-        <DocumentsList documents={documents} workspaceSlug={workspaceSlug} organisationSlug={slug} />
+        <DocumentsList
+          documents={documents}
+          workspaceSlug={workspaceSlug}
+          organisationSlug={slug}
+          isDemo={user.isDemo}
+        />
       </main>
     </div>
   );

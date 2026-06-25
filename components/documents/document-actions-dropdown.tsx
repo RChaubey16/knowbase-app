@@ -13,9 +13,10 @@ import { ActionType, Document } from "@/types/document";
 interface DocumentActionsDropdownProps {
   doc: Document;
   handleAction: (action: ActionType, doc: Document) => void;
+  isDemo?: boolean;
 }
 
-const DocumentActionsDropdown = ({ doc, handleAction }: DocumentActionsDropdownProps) => {
+const DocumentActionsDropdown = ({ doc, handleAction, isDemo = false }: DocumentActionsDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -37,16 +38,18 @@ const DocumentActionsDropdown = ({ doc, handleAction }: DocumentActionsDropdownP
         >
           View
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAction("edit", doc);
-          }}
-        >
-          Edit
-        </DropdownMenuItem>
-        {doc.status === "failed" && (
+        {!isDemo && (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAction("edit", doc);
+            }}
+          >
+            Edit
+          </DropdownMenuItem>
+        )}
+        {!isDemo && doc.status === "failed" && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -60,16 +63,20 @@ const DocumentActionsDropdown = ({ doc, handleAction }: DocumentActionsDropdownP
             </DropdownMenuItem>
           </>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="text-destructive focus:text-destructive cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAction("delete", doc);
-          }}
-        >
-          Delete
-        </DropdownMenuItem>
+        {!isDemo && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAction("delete", doc);
+              }}
+            >
+              Delete
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

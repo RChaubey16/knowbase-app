@@ -10,9 +10,10 @@ interface PageProps {
 export default async function WorkspacePage({ params }: PageProps) {
   const { workspaceSlug, slug } = await params;
 
-  const [documents, workspace] = await Promise.all([
+  const [documents, workspace, user] = await Promise.all([
     serverFetch<Document[]>(`/workspaces/${workspaceSlug}/documents?limit=50`),
     serverFetch<WorkspaceFields>(`/workspaces/${workspaceSlug}`),
+    serverFetch<{ isDemo: boolean }>("/auth/me"),
   ]);
 
   return (
@@ -21,6 +22,7 @@ export default async function WorkspacePage({ params }: PageProps) {
       workspace={workspace}
       organisationSlug={slug}
       workspaceSlug={workspaceSlug}
+      isDemo={user.isDemo}
     />
   );
 }

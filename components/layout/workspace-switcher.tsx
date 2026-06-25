@@ -38,6 +38,7 @@ export function WorkspaceSwitcher({
   selectedSpace,
   orgSlug,
   userRole,
+  isDemo = false,
 }: {
   swticherTitle: string;
   buttonText: string;
@@ -45,6 +46,7 @@ export function WorkspaceSwitcher({
   selectedSpace?: OrganisationFields | WorkspaceFields;
   orgSlug?: string;
   userRole?: string;
+  isDemo?: boolean;
 }) {
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();
@@ -189,7 +191,7 @@ export function WorkspaceSwitcher({
             </div>
             <span className="flex-1 truncate">{workspace.name}</span>
 
-            {userRole === "owner" && (
+            {userRole === "owner" && !isDemo && (
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"
@@ -223,7 +225,7 @@ export function WorkspaceSwitcher({
             )}
           </DropdownMenuItem>
         ))}
-        {userRole === "owner" && (
+        {userRole === "owner" && !isDemo && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem

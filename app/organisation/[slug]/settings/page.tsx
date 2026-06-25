@@ -16,14 +16,15 @@ export default async function OrganisationSettingsPage({
 }) {
   const { slug } = await params;
 
-  const [org, orgUser] = await Promise.all([
+  const [org, orgUser, user] = await Promise.all([
     serverFetch<Org>(`/organisations/${slug}`),
     serverFetch<{ organisation_members: { role: string } }>(`/organisations/${slug}/me`),
+    serverFetch<{ isDemo: boolean }>("/auth/me"),
   ]);
 
   const role = orgUser.organisation_members.role;
 
-  if (role !== "owner") {
+  if (role !== "owner" || user.isDemo) {
     redirect(`/organisation/${slug}`);
   }
 

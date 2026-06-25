@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import SetOrganisation from "@/app/set-organisation";
 import { Sidebar } from "@/components/layout/sidebar";
+import { DemoBanner } from "@/components/layout/demo-banner";
 
 import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
@@ -20,7 +21,7 @@ export default async function OrganisationLayout({
     serverFetch<{ organisation_members: { role: string } }>(
       `/organisations/${slug}/me`
     ),
-    serverFetch<{ userId: string; email: string }>("/auth/me"),
+    serverFetch<{ userId: string; email: string; isDemo: boolean }>("/auth/me"),
   ]);
 
   const currOrganisation = organisations.find((org) => org.slug === slug);
@@ -30,15 +31,19 @@ export default async function OrganisationLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <SetOrganisation orgId={slug} />
-      <Sidebar
-        organisations={organisations}
-        currOrganisation={currOrganisation}
-        orgUser={orgUser.organisation_members}
-        user={user}
-      />
-      <div className="flex flex-1 flex-col">{children}</div>
+    <div className="flex min-h-screen flex-col">
+      {user.isDemo && <DemoBanner />}
+      <div className="flex flex-1">
+        <SetOrganisation orgId={slug} />
+        <Sidebar
+          organisations={organisations}
+          currOrganisation={currOrganisation}
+          orgUser={orgUser.organisation_members}
+          user={user}
+          isDemo={user.isDemo}
+        />
+        <div className="flex flex-1 flex-col">{children}</div>
+      </div>
     </div>
   );
 }

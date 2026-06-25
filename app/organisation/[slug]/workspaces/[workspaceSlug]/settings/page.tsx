@@ -11,12 +11,13 @@ export default async function WorkspaceSettingsPage({
 }) {
   const { slug, workspaceSlug } = await params;
 
-  const [workspace, wsUser] = await Promise.all([
+  const [workspace, wsUser, user] = await Promise.all([
     serverFetch<WorkspaceFields>(`/workspaces/${workspaceSlug}`),
     serverFetch<{ workspace_members: { role: string } }>(`/workspaces/${workspaceSlug}/me`),
+    serverFetch<{ isDemo: boolean }>("/auth/me"),
   ]);
 
-  if (wsUser.workspace_members.role !== "owner") {
+  if (wsUser.workspace_members.role !== "owner" || user.isDemo) {
     redirect(`/organisation/${slug}/workspaces/${workspaceSlug}`);
   }
 

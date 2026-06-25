@@ -15,6 +15,7 @@ interface WorkspaceDashboardProps {
   workspace: WorkspaceFields;
   organisationSlug: string;
   workspaceSlug: string;
+  isDemo?: boolean;
 }
 
 const STATUS_BADGE_VARIANT: Record<DocumentStatus, "default" | "secondary" | "destructive"> = {
@@ -23,7 +24,7 @@ const STATUS_BADGE_VARIANT: Record<DocumentStatus, "default" | "secondary" | "de
   failed: "destructive",
 };
 
-function DashboardContent({ documents, workspace, organisationSlug, workspaceSlug }: WorkspaceDashboardProps) {
+function DashboardContent({ documents, workspace, organisationSlug, workspaceSlug, isDemo = false }: WorkspaceDashboardProps) {
   const { open: openAddDoc } = useAddDocumentModal();
 
   const total = documents.length;
@@ -134,13 +135,15 @@ function DashboardContent({ documents, workspace, organisationSlug, workspaceSlu
             <CardTitle className="text-base">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <Button
-              className="w-full justify-start gap-2"
-              onClick={() => openAddDoc(workspace)}
-            >
-              <Plus className="h-4 w-4" />
-              Add Document
-            </Button>
+            {!isDemo && (
+              <Button
+                className="w-full justify-start gap-2"
+                onClick={() => openAddDoc(workspace)}
+              >
+                <Plus className="h-4 w-4" />
+                Add Document
+              </Button>
+            )}
             <Button variant="outline" className="w-full justify-start gap-2" asChild>
               <Link href={searchHref}>
                 <Search className="h-4 w-4" />
