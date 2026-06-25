@@ -38,6 +38,7 @@ export function WorkspaceSwitcher({
   selectedSpace,
   orgSlug,
   userRole,
+  isDemo = false,
 }: {
   swticherTitle: string;
   buttonText: string;
@@ -45,22 +46,18 @@ export function WorkspaceSwitcher({
   selectedSpace?: OrganisationFields | WorkspaceFields;
   orgSlug?: string;
   userRole?: string;
+  isDemo?: boolean;
 }) {
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();
 
-  const { organisations } = useOrganisations(
+  const { organisations, updateOrganisation, deleteOrganisation } = useOrganisations(
     buttonText === "organisation" ? (spaces as OrganisationFields[]) : undefined
   );
-  const { workspaces } = useWorkspaces(
-    buttonText === "workspace"
-      ? (selectedSpace as WorkspaceFields)?.organisationId
-      : undefined,
+  const { workspaces, updateWorkspace, deleteWorkspace } = useWorkspaces(
+    buttonText === "workspace" ? orgSlug : undefined,
     buttonText === "workspace" ? (spaces as WorkspaceFields[]) : undefined
   );
-
-  const { updateOrganisation, deleteOrganisation } = useOrganisations();
-  const { updateWorkspace, deleteWorkspace } = useWorkspaces(orgSlug);
 
   const currentSpaces =
     (buttonText === "organisation" ? organisations : workspaces) || spaces;
@@ -189,7 +186,7 @@ export function WorkspaceSwitcher({
             </div>
             <span className="flex-1 truncate">{workspace.name}</span>
 
-            {userRole === "owner" && (
+            {userRole === "owner" && !isDemo && (
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"
@@ -223,7 +220,7 @@ export function WorkspaceSwitcher({
             )}
           </DropdownMenuItem>
         ))}
-        {userRole === "owner" && (
+        {userRole === "owner" && !isDemo && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem

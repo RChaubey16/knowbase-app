@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
@@ -8,8 +9,25 @@ export function GoogleLoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [demoLoading, setDemoLoading] = useState(false);
+
   const loginWithGoogle = async () => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`;
+  };
+
+  const loginWithDemo = async () => {
+    setDemoLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/demo`,
+        { method: "POST", credentials: "include" },
+      );
+      if (res.ok) {
+        window.location.href = "/";
+      }
+    } finally {
+      setDemoLoading(false);
+    }
   };
 
   return (
@@ -33,6 +51,24 @@ export function GoogleLoginForm({
               />
             </svg>
             Login with Google
+          </Button>
+        </Field>
+
+        <div className="relative flex items-center gap-3 text-muted-foreground text-xs">
+          <div className="h-px flex-1 bg-border" />
+          <span>or</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
+        <Field>
+          <Button
+            variant="ghost"
+            type="button"
+            className="cursor-pointer w-full"
+            onClick={loginWithDemo}
+            disabled={demoLoading}
+          >
+            {demoLoading ? "Loading demo..." : "Try Demo — no sign-in required"}
           </Button>
         </Field>
       </FieldGroup>

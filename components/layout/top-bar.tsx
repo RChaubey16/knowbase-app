@@ -26,6 +26,7 @@ interface TopBarProps {
   orgSlug: string;
   workspaceSlug?: string;
   wsUserRole: string;
+  isDemo?: boolean;
 }
 
 const ROLE_BADGE_STYLES: Record<string, string> = {
@@ -63,6 +64,7 @@ function TopBarContent({
   orgSlug,
   workspaceSlug,
   wsUserRole,
+  isDemo = false,
 }: TopBarProps) {
   const { open: openAddDoc } = useAddDocumentModal();
   const { open: openInvite } = useInviteMembersModal();
@@ -87,6 +89,7 @@ function TopBarContent({
               orgSlug={orgSlug}
               selectedSpace={selectedWorkspace}
               userRole={wsUserRole}
+              isDemo={isDemo}
             />
             <RoleBadge role={wsUserRole} />
           </>
@@ -125,18 +128,18 @@ function TopBarContent({
               </Button>
             )} */}
             
-            {wsUserRole !== "viewer" && 
-
-            <Button
-              className="button"
-              onClick={() => openAddDoc(selectedWorkspace)}
-            >
-              <Plus className="h-4 w-4 stroke-3" />
-              Add Document
-            </Button>}
+            {wsUserRole !== "viewer" && !isDemo && (
+              <Button
+                className="button"
+                onClick={() => openAddDoc(selectedWorkspace)}
+              >
+                <Plus className="h-4 w-4 stroke-3" />
+                Add Document
+              </Button>
+            )}
           </>
         )}
-        {wsUserRole === "owner" && workspaceSlug && (
+        {wsUserRole === "owner" && workspaceSlug && !isDemo && (
           <Link href={`/organisation/${orgSlug}/workspaces/${workspaceSlug}/settings`}>
             <Button variant="ghost" size="icon" aria-label="Workspace settings">
               <Settings className="h-4 w-4" />

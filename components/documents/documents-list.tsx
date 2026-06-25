@@ -93,10 +93,12 @@ const DocumentsList = ({
   documents,
   workspaceSlug,
   organisationSlug,
+  isDemo = false,
 }: {
   documents: Document[];
   workspaceSlug: string;
   organisationSlug?: string;
+  isDemo?: boolean;
 }) => {
   const { documents: documentsList, deleteDocument, reindexDocument, fetchDocument } = useDocuments(
     workspaceSlug,
@@ -153,17 +155,21 @@ const DocumentsList = ({
         <EmptyState
           title="No documents yet"
           description="Start building your knowledge base by adding your first document. You can add text, PDFs, or web links."
-          actionLabel="Add Document"
-          onAction={() => setIsAddModalOpen(true)}
+          {...(!isDemo && {
+            actionLabel: "Add Document",
+            onAction: () => setIsAddModalOpen(true),
+          })}
         />
-        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogContent className="sm:max-w-xl">
-            <DocumentForm
-              workspace={{ slug: workspaceSlug, organisationId: organisationSlug ?? "" }}
-              onSuccess={() => setIsAddModalOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        {!isDemo && (
+          <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+            <DialogContent className="sm:max-w-xl">
+              <DocumentForm
+                workspace={{ slug: workspaceSlug, organisationId: organisationSlug ?? "" }}
+                onSuccess={() => setIsAddModalOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     );
   }
@@ -203,6 +209,7 @@ const DocumentsList = ({
               getStatusIcon={getStatusIcon}
               getStatusBadge={getStatusBadge}
               getRowClassName={getRowClassName}
+              isDemo={isDemo}
             />
           </div>
         ) : (
@@ -214,6 +221,7 @@ const DocumentsList = ({
                 handleAction={handleAction}
                 getStatusIcon={getStatusIcon}
                 getStatusBadge={getStatusBadge}
+                isDemo={isDemo}
               />
             ))}
           </div>

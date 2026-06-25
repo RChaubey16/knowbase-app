@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FileText, Search, Menu, X, UserPlus, Settings, LogOut } from "lucide-react";
@@ -34,6 +34,7 @@ interface SidebarProps {
     userId: string;
     email: string;
   };
+  isDemo?: boolean;
 }
 
 export function Sidebar(props: SidebarProps) {
@@ -49,6 +50,7 @@ export function SidebarContent({
   currOrganisation,
   orgUser,
   user,
+  isDemo = false,
 }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -79,7 +81,7 @@ export function SidebarContent({
       ]
     : [];
 
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
   return (
     <>
@@ -136,6 +138,7 @@ export function SidebarContent({
             spaces={organisations}
             selectedSpace={currOrganisation}
             userRole={orgUser.role}
+            isDemo={isDemo}
           />
         </div>
 
@@ -177,7 +180,7 @@ export function SidebarContent({
           )} */}
         </nav>
 
-        {isUserOwner && (
+        {isUserOwner && !isDemo && (
           <div className="border-t border-sidebar-border px-3 py-3">
             <Link
               href={`/organisation/${currOrganisation.slug}/settings`}

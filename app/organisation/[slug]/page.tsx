@@ -5,6 +5,7 @@ import WorkspaceCard from "@/components/cards/workspace-card";
 import CreateWorkspaceButton from "@/components/buttons/create-workspace-button";
 
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import { WorkspaceFields } from "@/types/workspace";
 import { OrganisationFields } from "@/types/organisation";
 
@@ -15,11 +16,12 @@ type PageProps = {
 export default async function OrganisationHomePage({ params }: PageProps) {
   const { slug } = await params;
 
-  const [currentOrganisation, workspaces] = await Promise.all([
+  const [currentOrganisation, workspaces, user] = await Promise.all([
     serverFetch<OrganisationFields>(`/organisations/${slug}`),
     serverFetch<WorkspaceFields[]>("/workspaces", {
       headers: { "X-Organisation": slug },
     }),
+    getMe(),
   ]);
 
   if (!currentOrganisation) {
@@ -39,12 +41,12 @@ export default async function OrganisationHomePage({ params }: PageProps) {
               </h1>
               <p className="text-muted-foreground text-lg">
                 {noWorkspaces
-                  ? "Create your first workspace to get started."
+                  ? "Select a workspace to view and manage your documents."
                   : "Select a workspace to view and manage your documents."}
               </p>
             </div>
 
-            <CreateWorkspaceButton organisationSlug={slug} />
+            {!user.isDemo && <CreateWorkspaceButton organisationSlug={slug} />}
           </div>
 
           {!noWorkspaces ? (
@@ -57,9 +59,9 @@ export default async function OrganisationHomePage({ params }: PageProps) {
                 />
               ))}
             </div>
-          ) : (
+          ) : !user.isDemo ? (
             <CreateWorkspaceCTA currOrganisationSlug={slug} />
-          )}
+          ) : null}
         </div>
       </main>
     </div>
