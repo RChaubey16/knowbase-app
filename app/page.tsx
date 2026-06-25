@@ -10,13 +10,10 @@ import { serverFetch } from "@/lib/fetch/server";
 import { OrganisationFields } from "@/types/organisation";
 
 export default async function Home() {
-  const data: { userId: string; email: string; isDemo?: boolean } = await serverFetch("/auth/me");
-
-  let organisations: OrganisationFields[] = [];
-
-  if (data && data.userId) {
-    organisations = await serverFetch("/organisations");
-  }
+  const [data, organisations] = await Promise.all([
+    serverFetch<{ userId: string; email: string; isDemo?: boolean }>("/auth/me"),
+    serverFetch<OrganisationFields[]>("/organisations"),
+  ]);
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background font-sans">

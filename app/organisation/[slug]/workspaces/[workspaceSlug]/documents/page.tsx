@@ -1,5 +1,6 @@
 import DocumentsList from "@/components/documents/documents-list";
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import { Document } from "@/types/document";
 
 interface PageProps {
@@ -11,7 +12,7 @@ export default async function WorkspaceDocumentsPage({ params }: PageProps) {
 
   const [documents, user] = await Promise.all([
     serverFetch<Document[]>(`/workspaces/${workspaceSlug}/documents`),
-    serverFetch<{ isDemo: boolean }>("/auth/me"),
+    getMe(),
   ]);
 
   return (

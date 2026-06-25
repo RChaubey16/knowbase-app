@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import OrganisationSettingsForm from "@/components/settings/organisation-settings-form";
 import OrgMembersSection from "@/components/settings/org-members-section";
 
@@ -19,7 +20,7 @@ export default async function OrganisationSettingsPage({
   const [org, orgUser, user] = await Promise.all([
     serverFetch<Org>(`/organisations/${slug}`),
     serverFetch<{ organisation_members: { role: string } }>(`/organisations/${slug}/me`),
-    serverFetch<{ isDemo: boolean }>("/auth/me"),
+    getMe(),
   ]);
 
   const role = orgUser.organisation_members.role;

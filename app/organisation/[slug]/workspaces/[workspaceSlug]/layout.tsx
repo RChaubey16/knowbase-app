@@ -2,6 +2,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import { WorkspaceFields } from "@/types/workspace";
 
 export default async function WorkspaceLayout({
@@ -20,7 +21,7 @@ export default async function WorkspaceLayout({
     serverFetch<{ workspace_members: { role: string } }>(
       `/workspaces/${workspaceSlug}/me`
     ),
-    serverFetch<{ isDemo: boolean }>("/auth/me"),
+    getMe(),
   ]);
   const noWorkspaces = workspaces.length === 0;
 

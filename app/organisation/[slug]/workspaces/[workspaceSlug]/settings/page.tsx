@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import WorkspaceSettingsForm from "@/components/settings/workspace-settings-form";
 import WorkspaceMembersSection from "@/components/settings/workspace-members-section";
 import { WorkspaceFields } from "@/types/workspace";
@@ -14,7 +15,7 @@ export default async function WorkspaceSettingsPage({
   const [workspace, wsUser, user] = await Promise.all([
     serverFetch<WorkspaceFields>(`/workspaces/${workspaceSlug}`),
     serverFetch<{ workspace_members: { role: string } }>(`/workspaces/${workspaceSlug}/me`),
-    serverFetch<{ isDemo: boolean }>("/auth/me"),
+    getMe(),
   ]);
 
   if (wsUser.workspace_members.role !== "owner" || user.isDemo) {

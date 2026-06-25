@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { DemoBanner } from "@/components/layout/demo-banner";
 
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import { OrganisationFields } from "@/types/organisation";
 
 export default async function OrganisationLayout({
@@ -21,7 +22,7 @@ export default async function OrganisationLayout({
     serverFetch<{ organisation_members: { role: string } }>(
       `/organisations/${slug}/me`
     ),
-    serverFetch<{ userId: string; email: string; isDemo: boolean }>("/auth/me"),
+    getMe(),
   ]);
 
   const currOrganisation = organisations.find((org) => org.slug === slug);

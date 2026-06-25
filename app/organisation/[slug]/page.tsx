@@ -5,6 +5,7 @@ import WorkspaceCard from "@/components/cards/workspace-card";
 import CreateWorkspaceButton from "@/components/buttons/create-workspace-button";
 
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import { WorkspaceFields } from "@/types/workspace";
 import { OrganisationFields } from "@/types/organisation";
 
@@ -20,7 +21,7 @@ export default async function OrganisationHomePage({ params }: PageProps) {
     serverFetch<WorkspaceFields[]>("/workspaces", {
       headers: { "X-Organisation": slug },
     }),
-    serverFetch<{ isDemo: boolean }>("/auth/me"),
+    getMe(),
   ]);
 
   if (!currentOrganisation) {

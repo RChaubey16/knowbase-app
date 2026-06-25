@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FileText, Search, Menu, X, UserPlus, Settings, LogOut } from "lucide-react";
@@ -81,7 +81,7 @@ export function SidebarContent({
       ]
     : [];
 
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
   return (
     <>

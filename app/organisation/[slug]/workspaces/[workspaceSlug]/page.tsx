@@ -1,4 +1,5 @@
 import { serverFetch } from "@/lib/fetch/server";
+import { getMe } from "@/lib/fetch/cached";
 import { Document } from "@/types/document";
 import { WorkspaceFields } from "@/types/workspace";
 import { WorkspaceDashboard } from "@/components/workspace/workspace-dashboard";
@@ -13,7 +14,7 @@ export default async function WorkspacePage({ params }: PageProps) {
   const [documents, workspace, user] = await Promise.all([
     serverFetch<Document[]>(`/workspaces/${workspaceSlug}/documents?limit=50`),
     serverFetch<WorkspaceFields>(`/workspaces/${workspaceSlug}`),
-    serverFetch<{ isDemo: boolean }>("/auth/me"),
+    getMe(),
   ]);
 
   return (

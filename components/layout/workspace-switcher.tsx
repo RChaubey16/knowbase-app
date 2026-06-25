@@ -51,18 +51,13 @@ export function WorkspaceSwitcher({
   const router = useRouter();
   const { open } = useCreateWorkspaceModal();
 
-  const { organisations } = useOrganisations(
+  const { organisations, updateOrganisation, deleteOrganisation } = useOrganisations(
     buttonText === "organisation" ? (spaces as OrganisationFields[]) : undefined
   );
-  const { workspaces } = useWorkspaces(
-    buttonText === "workspace"
-      ? (selectedSpace as WorkspaceFields)?.organisationId
-      : undefined,
+  const { workspaces, updateWorkspace, deleteWorkspace } = useWorkspaces(
+    buttonText === "workspace" ? orgSlug : undefined,
     buttonText === "workspace" ? (spaces as WorkspaceFields[]) : undefined
   );
-
-  const { updateOrganisation, deleteOrganisation } = useOrganisations();
-  const { updateWorkspace, deleteWorkspace } = useWorkspaces(orgSlug);
 
   const currentSpaces =
     (buttonText === "organisation" ? organisations : workspaces) || spaces;
